@@ -1,6 +1,7 @@
 export interface User {
-  id: string;
-  email: string;
-  name: string;
-  // Add more user fields as needed
+  id: number;
+  username: string;
+  nombre: string;
+  apellido: string;
+  sector: string;
 }

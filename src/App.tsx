@@ -1,32 +1,49 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { LoginPage } from './modules/auth/LoginPage';
-
-// Placeholder components
-// const LoginPage = () => (
-//   <div className="min-h-screen flex items-center justify-center bg-gray-100">
-//     <div className="bg-white p-8 rounded-lg shadow-md">
-//       <h1 className="text-2xl font-bold mb-4">Login</h1>
-//       <p className="text-gray-600">Login page placeholder</p>
-//     </div>
-//   </div>
-// );
-
-const HomePage = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-100">
-    <div className="bg-white p-8 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4">Home</h1>
-      <p className="text-gray-600">Protected home page placeholder</p>
-    </div>
-  </div>
-);
+import { HomePage } from './modules/home/HomePage';
+import { OrdersPage } from './modules/orders/OrdersPage';
+import { AssemblyPage } from './modules/assembly/AssemblyPage';
+import { BillingPage } from './modules/billing/BillingPage';
+import { NotFoundPage } from './shared/components/NotFoundPage';
+import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
+import { authService } from './modules/auth/auth.service';
 
 function App() {
+  const [isValidating, setIsValidating] = useState(true);
+
+  useEffect(() => {
+    // Validate user on app load
+    const validateUser = async () => {
+      if (authService.isAuthenticated()) {
+        // Refresh user data from backend to sync with server
+        await authService.refreshUser();
+      }
+      setIsValidating(false);
+    };
+
+    validateUser();
+  }, []);
+
+  // Show loading while validating
+  if (isValidating) {
+    return (
+      <div className="min-h-screen bg-dark flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/access-denied" element={<AccessDeniedPage />} />
         
         {/* Protected Routes */}
         <Route
@@ -37,6 +54,36 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/assembly"
+          element={
+            <ProtectedRoute>
+              <AssemblyPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/billing"
+          element={
+            <ProtectedRoute>
+              <BillingPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 404 Catch-all */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

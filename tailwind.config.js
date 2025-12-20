@@ -2,7 +2,45 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#D4AF37', // Golden
+          light: '#E5C158',
+          dark: '#B8941F',
+        },
+        secondary: {
+          DEFAULT: '#C9A961', // Beige
+          light: '#D9BC7F',
+          dark: '#A68B4A',
+        },
+        accent: {
+          DEFAULT: '#8B7355', // Brown
+          light: '#A38A70',
+          dark: '#6B5840',
+        },
+        dark: {
+          DEFAULT: '#1a1a1a',
+          lighter: '#2d2d2d',
+          darker: '#0d0d0d',
+        },
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+    },
   },
   plugins: [],
 };

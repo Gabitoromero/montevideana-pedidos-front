@@ -3,31 +3,40 @@ import { persist } from 'zustand/middleware';
 import type { User } from '../shared/types/user.types';
 
 interface AuthState {
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   user: User | null;
   isAuthenticated: boolean;
-  setLogin: (token: string, user: User) => void;
+  setLogin: (accessToken: string, refreshToken: string, user: User) => void;
+  setUser: (user: User) => void;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      token: null,
+      accessToken: null,
+      refreshToken: null,
       user: null,
       isAuthenticated: false,
       
-      setLogin: (token: string, user: User) => {
+      setLogin: (accessToken: string, refreshToken: string, user: User) => {
         set({
-          token,
+          accessToken,
+          refreshToken,
           user,
           isAuthenticated: true,
         });
       },
       
+      setUser: (user: User) => {
+        set({ user });
+      },
+      
       logout: () => {
         set({
-          token: null,
+          accessToken: null,
+          refreshToken: null,
           user: null,
           isAuthenticated: false,
         });
