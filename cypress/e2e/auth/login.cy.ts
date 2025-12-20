@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Login Page', () => {
   beforeEach(() => {
     // Clear localStorage before each test

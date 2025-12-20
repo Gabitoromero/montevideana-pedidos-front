@@ -69,7 +69,7 @@ export const LoginPage = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ej: gabi.dev"
+              placeholder="Ej: romi"
               icon={User}
               disabled={isLoading}
             />

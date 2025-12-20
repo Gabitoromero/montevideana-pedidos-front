@@ -1,4 +1,4 @@
-export type Sector = 'admin' | 'ventas' | 'armado' | 'facturacion';
+export type Sector = 'admin' | 'armado' | 'facturacion' | 'CHESS';
 
 export interface RoutePermission {
   path: string;
@@ -9,22 +9,22 @@ export interface RoutePermission {
 export const ROUTE_PERMISSIONS: RoutePermission[] = [
   {
     path: '/',
-    allowedSectors: ['admin', 'ventas', 'armado', 'facturacion'],
+    allowedSectors: ['admin', 'CHESS'],
     label: 'Inicio'
   },
   {
     path: '/orders',
-    allowedSectors: ['admin', 'ventas'],
+    allowedSectors: ['admin', 'CHESS'],
     label: 'Pedidos'
   },
   {
     path: '/assembly',
-    allowedSectors: ['admin', 'armado'],
+    allowedSectors: ['admin', 'CHESS', 'armado'],
     label: 'Armado de Pedidos'
   },
   {
     path: '/billing',
-    allowedSectors: ['admin', 'facturacion'],
+    allowedSectors: ['admin', 'CHESS', 'facturacion'],
     label: 'Facturación'
   },
 ];
