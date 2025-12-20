@@ -43,6 +43,10 @@ export const HomePage: React.FC = () => {
   // Obtener rutas accesibles según el sector del usuario
   const accessibleRoutes = user ? getAccessibleRoutes(user.sector) : [];
 
+  // Debug: Log para verificar datos
+  console.log('HomePage - User:', user);
+  console.log('HomePage - Accessible Routes:', accessibleRoutes);
+
   // Definir todas las tarjetas posibles con sus iconos
   const allMenuCards = [
     {
