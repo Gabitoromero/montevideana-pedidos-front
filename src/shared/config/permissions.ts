@@ -27,6 +27,11 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
     allowedSectors: ['admin', 'CHESS', 'facturacion'],
     label: 'Facturación'
   },
+  {
+    path: '/users',
+    allowedSectors: ['admin'],
+    label: 'Gestión de Usuarios'
+  },
 ];
 
 /**

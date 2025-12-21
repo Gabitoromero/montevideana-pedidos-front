@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ListOrdered, Package, DollarSign } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { LogoutButton } from '../../shared/components/LogoutButton';
+import { Sidebar } from '../../shared/components/Sidebar';
 import { useAuthStore } from '../../store/auth.store';
 import { getAccessibleRoutes } from '../../shared/config/permissions';
 import logo from '../../assets/logo.png';
@@ -76,6 +77,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-dark p-8 relative">
+      <Sidebar />
       <LogoutButton />
 
       <div className="max-w-6xl mx-auto">

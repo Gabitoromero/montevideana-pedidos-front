@@ -6,6 +6,7 @@ import { HomePage } from './modules/home/HomePage';
 import { OrdersPage } from './modules/orders/OrdersPage';
 import { AssemblyPage } from './modules/assembly/AssemblyPage';
 import { BillingPage } from './modules/billing/BillingPage';
+import { UserManagementPage } from './modules/users/UserManagementPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
 import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
 import { authService } from './modules/auth/auth.service';
@@ -78,6 +79,15 @@ function App() {
           element={
             <ProtectedRoute>
               <BillingPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UserManagementPage />
             </ProtectedRoute>
           }
         />
