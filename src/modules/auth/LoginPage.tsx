@@ -4,6 +4,8 @@ import { Lock, User, LogIn } from 'lucide-react';
 import { authService } from './auth.service';
 import { Input } from '../../shared/components/Input';
 import { Button } from '../../shared/components/Button';
+import { getDefaultRouteForSector } from '../../shared/config/routes';
+import { useAuthStore } from '../../store/auth.store';
 // import logo from '../../assets/logo.png';
 // import logo1 from '../../assets/logoMontevideana.svg';
 // import logo2 from '../../assets/logo2.svg';
@@ -27,8 +29,17 @@ export const LoginPage = () => {
     try {
       // Llamamos a nuestro servicio
       await authService.login(username, password);
-      // Si no explota, es que fue exitoso. Redirigimos al Home.
-      navigate('/');
+      
+      // Obtener el usuario actualizado del store
+      const currentUser = useAuthStore.getState().user;
+      
+      // Redirigir según el sector del usuario
+      if (currentUser) {
+        const redirectPath = getDefaultRouteForSector(currentUser.sector);
+        navigate(redirectPath);
+      } else {
+        navigate('/');
+      }
     } catch (err: any) {
       console.error(err);
       // Manejo básico de errores

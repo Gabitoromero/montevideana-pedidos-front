@@ -16,27 +16,32 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, isPaid }) => {
       className={`p-4 rounded-lg border-l-4 transition-all duration-200 hover:shadow-lg ${
         isPaid
           ? 'bg-green-900/40 border-green-500'
-          : 'bg-[#2a2a2a] border-gray-600'
+          : ''
       }`}
+      style={!isPaid ? {
+        backgroundColor: 'var(--bg-secondary)',
+        borderColor: 'var(--border)'
+      } : undefined}
     >
       {/* Order ID */}
       <div
         className={`text-2xl font-bold mb-3 ${
-          isPaid ? 'text-green-400' : 'text-red-400'
+          isPaid ? 'text-green-400' : ''
         }`}
+        style={!isPaid ? { color: 'var(--error)' } : undefined}
       >
         {pedido.idPedido}
       </div>
 
       {/* Fletero */}
       <div className="flex items-start gap-2 mb-2">
-        <User size={16} className="text-gray-400 mt-0.5 flex-shrink-0" />
-        <span className="text-sm text-gray-300">{pedido.fletero?.dsFletero || 'Sin fletero'}</span>
+        <User size={16} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
+        <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{pedido.fletero?.dsFletero || 'Sin fletero'}</span>
       </div>
 
       {/* Operator */}
-      <div className="text-xs text-gray-400 mt-2">
-        Op: <span className="text-gray-300">{operatorName}</span>
+      <div className="text-xs mt-2" style={{ color: 'var(--text-tertiary)' }}>
+        Op: <span style={{ color: 'var(--text-secondary)' }}>{operatorName}</span>
       </div>
     </div>
   );

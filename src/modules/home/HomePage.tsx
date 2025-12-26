@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ListOrdered, Package, DollarSign } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
@@ -6,6 +6,7 @@ import { LogoutButton } from '../../shared/components/LogoutButton';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { useAuthStore } from '../../store/auth.store';
 import { getAccessibleRoutes } from '../../shared/config/permissions';
+import { getDefaultRouteForSector } from '../../shared/config/routes';
 import logo from '../../assets/logo.png';
 
 interface MenuCardProps {
@@ -40,6 +41,14 @@ const MenuCard: React.FC<MenuCardProps> = ({ title, description, icon, onClick }
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+
+  // Redirigir automáticamente a usuarios no-admin/CHESS a su página específica
+  useEffect(() => {
+    if (user && user.sector !== 'admin' && user.sector !== 'CHESS') {
+      const redirectPath = getDefaultRouteForSector(user.sector);
+      navigate(redirectPath, { replace: true });
+    }
+  }, [user, navigate]);
 
   // Obtener rutas accesibles según el sector del usuario
   const accessibleRoutes = user ? getAccessibleRoutes(user.sector) : [];

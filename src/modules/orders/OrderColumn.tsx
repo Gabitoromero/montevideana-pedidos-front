@@ -16,15 +16,18 @@ export const OrderColumn: React.FC<OrderColumnProps> = ({
 }) => {
   return (
     <div className="flex flex-col h-full">
-      {/* Column Header */}
+      {/* Column Header - maintains same color regardless of theme */}
       <div
         className={`${colorClass} text-white font-bold text-center py-4 px-6 rounded-t-lg text-lg uppercase tracking-wide`}
       >
         {title}
       </div>
 
-      {/* Orders List */}
-      <div className="flex-1 bg-[#1a1a1a] rounded-b-lg p-4 overflow-y-auto space-y-3 min-h-[500px] max-h-[calc(100vh-250px)]">
+      {/* Orders List - uses CSS variables for theme support */}
+      <div 
+        className="flex-1 rounded-b-lg p-4 overflow-y-auto space-y-3 min-h-[500px] max-h-[calc(100vh-250px)]"
+        style={{ backgroundColor: 'var(--bg-primary)' }}
+      >
         {orders.length > 0 ? (
           orders.map((order) => {
             // Check if order is paid (estado final is PAGADO)
@@ -39,7 +42,10 @@ export const OrderColumn: React.FC<OrderColumnProps> = ({
             );
           })
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <div 
+            className="flex items-center justify-center h-full"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
             No hay pedidos en este estado
           </div>
         )}

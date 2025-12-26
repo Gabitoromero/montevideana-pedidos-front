@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sun, Moon, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { OrderColumn } from './OrderColumn';
 import { LogoutButton } from '../../shared/components/LogoutButton';
 import { Sidebar } from '../../shared/components/Sidebar';
@@ -15,7 +15,6 @@ export const OrdersPage: React.FC = () => {
   const [preparedOrders, setPreparedOrders] = useState<PedidoConMovimiento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isLightMode, setIsLightMode] = useState(false);
   
   // Use ref to track if component is mounted (for cleanup)
   const isMountedRef = useRef(true);
@@ -86,56 +85,29 @@ export const OrdersPage: React.FC = () => {
     };
   }, []);
 
-  // Toggle light mode
-  const toggleLightMode = () => {
-    setIsLightMode(!isLightMode);
-    document.documentElement.classList.toggle('light');
-  };
-
   return (
-    <div className="min-h-screen bg-[#1a1a1a] p-6">
+    <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <Sidebar />
       <LogoutButton />
-
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Pantalla de Cocina</h1>
-          
-          {/* Light Mode Toggle */}
-          <button
-            onClick={toggleLightMode}
-            className="flex items-center gap-2 px-4 py-2 bg-[#D4AF37] text-[#1a1a1a] rounded-lg hover:bg-[#B89A7F] transition-colors font-semibold"
-          >
-            {isLightMode ? (
-              <>
-                <Moon size={20} />
-                Modo Claro
-              </>
-            ) : (
-              <>
-                <Sun size={20} />
-                Modo Claro
-              </>
-            )}
-          </button>
-        </div>
-      </div>
 
       {/* Loading State */}
       {isLoading && (
         <div className="max-w-7xl mx-auto text-center py-20">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
-          <p className="text-gray-400 mt-4">Cargando pedidos...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--accent)' }}></div>
+          <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>Cargando pedidos...</p>
         </div>
       )}
 
       {/* Error State */}
       {error && (
         <div className="max-w-7xl mx-auto mb-6">
-          <div className="bg-red-900/20 border border-red-500 rounded-lg p-4 flex items-center gap-3">
-            <AlertCircle className="text-red-500" size={24} />
-            <span className="text-red-300">{error}</span>
+          <div className="rounded-lg p-4 flex items-center gap-3" style={{ 
+            backgroundColor: 'var(--error)', 
+            opacity: 0.2,
+            border: '1px solid var(--error)'
+          }}>
+            <AlertCircle style={{ color: 'var(--error)' }} size={24} />
+            <span style={{ color: 'var(--error)' }}>{error}</span>
           </div>
         </div>
       )}
