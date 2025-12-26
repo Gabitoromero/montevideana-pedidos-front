@@ -6,7 +6,10 @@ import { HomePage } from './modules/home/HomePage';
 import { OrdersPage } from './modules/orders/OrdersPage';
 import { AssemblyPage } from './modules/assembly/AssemblyPage';
 import { BillingPage } from './modules/billing/BillingPage';
-import { UserManagementPage } from './modules/users/UserManagementPage';
+import { UserManagementHub } from './modules/users/UserManagementHub';
+import { UserListPage } from './modules/users/UserListPage';
+import { CreateUserPage } from './modules/users/CreateUserPage';
+import { EditUserPage } from './modules/users/EditUserPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
 import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
 import { authService } from './modules/auth/auth.service';
@@ -83,11 +86,39 @@ function App() {
           }
         />
         
+        {/* User Management Routes */}
         <Route
           path="/users"
           element={
             <ProtectedRoute>
-              <UserManagementPage />
+              <UserManagementHub />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/users/list"
+          element={
+            <ProtectedRoute>
+              <UserListPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/users/create"
+          element={
+            <ProtectedRoute>
+              <CreateUserPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/users/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditUserPage />
             </ProtectedRoute>
           }
         />

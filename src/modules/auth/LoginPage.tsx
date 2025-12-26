@@ -4,7 +4,11 @@ import { Lock, User, LogIn } from 'lucide-react';
 import { authService } from './auth.service';
 import { Input } from '../../shared/components/Input';
 import { Button } from '../../shared/components/Button';
-import logo from '../../assets/logo.png';
+// import logo from '../../assets/logo.png';
+// import logo1 from '../../assets/logoMontevideana.svg';
+// import logo2 from '../../assets/logo2.svg';
+import logo3 from '../../assets/ultima.png';
+
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -41,7 +45,7 @@ export const LoginPage = () => {
         {/* Logo Principal */}
         <div className="text-center mb-8">
           <img 
-            src={logo} 
+            src={logo3} 
             alt="La Montevideana System" 
             className="w-64 h-64 object-contain mx-auto mb-4 animate-pulse-slow"
           />

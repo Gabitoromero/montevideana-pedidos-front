@@ -8,17 +8,62 @@ export interface CreateUsuarioDTO {
   password: string;
 }
 
-export interface UsuarioResponse {
+export interface UpdateUsuarioDTO {
+  username?: string;
+  nombre?: string;
+  apellido?: string;
+  sector?: 'admin' | 'armado' | 'facturacion';
+  password?: string;
+  activo?: boolean;
+}
+
+export interface Usuario {
   id: number;
   username: string;
   nombre: string;
   apellido: string;
-  sector: string;
+  sector: 'admin' | 'armado' | 'facturacion' | 'CHESS';
+  activo: boolean;
 }
 
 class UserService {
-  async createUser(data: CreateUsuarioDTO): Promise<UsuarioResponse> {
-    const response = await apiClient.post<UsuarioResponse>('/usuarios', data);
+  /**
+   * Crear un nuevo usuario
+   */
+  async createUser(data: CreateUsuarioDTO): Promise<Usuario> {
+    const response = await apiClient.post<Usuario>('/usuarios', data);
+    return response.data;
+  }
+
+  /**
+   * Obtener todos los usuarios del sistema
+   */
+  async getAllUsers(): Promise<Usuario[]> {
+    const response = await apiClient.get<Usuario[]>('/usuarios');
+    return response.data;
+  }
+
+  /**
+   * Obtener un usuario por ID
+   */
+  async getUserById(id: number): Promise<Usuario> {
+    const response = await apiClient.get<Usuario>(`/usuarios/${id}`);
+    return response.data;
+  }
+
+  /**
+   * Actualizar un usuario existente
+   */
+  async updateUser(id: number, data: UpdateUsuarioDTO): Promise<Usuario> {
+    const response = await apiClient.put<Usuario>(`/usuarios/${id}`, data);
+    return response.data;
+  }
+
+  /**
+   * Dar de baja un usuario (baja lógica)
+   */
+  async deactivateUser(id: number): Promise<Usuario> {
+    const response = await apiClient.put<Usuario>(`/usuarios/${id}`, { activo: false });
     return response.data;
   }
 }
