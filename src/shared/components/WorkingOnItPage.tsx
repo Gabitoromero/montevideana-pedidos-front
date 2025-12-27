@@ -1,12 +1,12 @@
 import React from 'react';
 import { Wrench } from 'lucide-react';
-import { LogoutButton } from '../components/LogoutButton';
+import { Sidebar } from '../components/Sidebar';
 import logo from '../../assets/logo.png';
 
 export const WorkingOnItPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-dark flex items-center justify-center p-4 relative">
-      <LogoutButton />
+      <Sidebar />
       
       <div className="text-center animate-fade-in">
         {/* Logo */}

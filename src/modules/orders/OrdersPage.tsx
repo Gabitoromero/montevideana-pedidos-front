@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { OrderColumn } from './OrderColumn';
-import { LogoutButton } from '../../shared/components/LogoutButton';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { getOrdersByState } from './orders.service';
 import type { PedidoConMovimiento } from './order.types';
@@ -88,7 +87,6 @@ export const OrdersPage: React.FC = () => {
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <Sidebar />
-      <LogoutButton />
 
       {/* Loading State */}
       {isLoading && (
