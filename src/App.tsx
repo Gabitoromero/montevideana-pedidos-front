@@ -10,6 +10,7 @@ import { UserManagementHub } from './modules/users/UserManagementHub';
 import { UserListPage } from './modules/users/UserListPage';
 import { CreateUserPage } from './modules/users/CreateUserPage';
 import { EditUserPage } from './modules/users/EditUserPage';
+import { FleterosListPage } from './modules/fleteros/FleterosListPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
 import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
 import { authService } from './modules/auth/auth.service';
@@ -119,6 +120,16 @@ function App() {
           element={
             <ProtectedRoute>
               <EditUserPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fleteros Management Route */}
+        <Route
+          path="/fleteros"
+          element={
+            <ProtectedRoute>
+              <FleterosListPage />
             </ProtectedRoute>
           }
         />

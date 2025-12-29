@@ -47,6 +47,11 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
     allowedSectors: ['admin', 'armado', 'facturacion', 'CHESS'], // Todos pueden editar su propio perfil
     label: 'Editar Usuario'
   },
+  {
+    path: '/fleteros',
+    allowedSectors: ['admin'],
+    label: 'Gestión de Fleteros'
+  },
 ];
 
 /**

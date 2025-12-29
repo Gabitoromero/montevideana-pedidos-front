@@ -19,18 +19,18 @@ const MenuCard: React.FC<MenuCardProps> = ({ title, description, icon, onClick }
   return (
     <Card
       padding="lg"
-      className="cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-dark-lighter border-2 border-accent/30 hover:border-primary group"
+      className="cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-[var(--bg-secondary)] border-2 border-[var(--border)] hover:border-[var(--primary)] group"
       onClick={onClick}
     >
       <div className="flex flex-col items-center text-center gap-4">
-        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-          <div className="text-primary group-hover:text-primary-light transition-colors">
+        <div className="w-20 h-20 rounded-full bg-[var(--primary)]/10 flex items-center justify-center group-hover:bg-[var(--primary)]/20 transition-colors">
+          <div className="text-[var(--primary)] group-hover:text-[var(--primary-light)] transition-colors">
             {icon}
           </div>
         </div>
         <div>
-          <h3 className="text-2xl font-bold text-gray-100 mb-2">{title}</h3>
-          <p className="text-gray-400">{description}</p>
+          <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{title}</h3>
+          <p className="text-[var(--text-secondary)]">{description}</p>
         </div>
       </div>
     </Card>
@@ -84,7 +84,7 @@ export const HomePage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-dark p-8 relative">
+    <div className="min-h-screen bg-[var(--bg-primary)] p-8 relative">
       <Sidebar />
 
       <div className="max-w-6xl mx-auto">
@@ -95,13 +95,13 @@ export const HomePage: React.FC = () => {
             alt="La Montevideana System" 
             className="w-64 h-64 object-contain mx-auto mb-6"
           />
-          <h1 className="text-4xl font-bold text-gray-100 mb-2">
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">
             Bienvenido, {user?.nombre} {user?.apellido}
           </h1>
-          <p className="text-xl text-gray-400">
-            Sector: <span className="text-primary font-semibold">{user?.sector}</span>
+          <p className="text-xl text-[var(--text-secondary)]">
+            Sector: <span className="text-[var(--primary)] font-semibold">{user?.sector}</span>
           </p>
-          <p className="text-md text-gray-500 mt-2">
+          <p className="text-md text-[var(--text-secondary)] mt-2">
             Selecciona un módulo para comenzar
           </p>
         </div>
@@ -121,7 +121,7 @@ export const HomePage: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-12 animate-fade-in">
-            <p className="text-gray-400 text-lg">
+            <p className="text-[var(--text-secondary)] text-lg">
               No tienes acceso a ningún módulo.
               <br />
               Contacta al administrador para obtener permisos.
