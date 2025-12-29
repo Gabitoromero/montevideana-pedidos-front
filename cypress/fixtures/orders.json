@@ -1,0 +1,74 @@
+[
+  {
+    "pedido": {
+      "idPedido": "PED-001",
+      "fechaHora": "2024-01-15T10:30:00Z",
+      "cliente": "Cliente Test 1"
+    },
+    "ultimoMovimiento": {
+      "id": 1,
+      "estadoFinal": {
+        "id": 1,
+        "nombre": "PENDIENTE"
+      },
+      "fechaHora": "2024-01-15T10:30:00Z",
+      "usuario": {
+        "username": "admin"
+      }
+    }
+  },
+  {
+    "pedido": {
+      "idPedido": "PED-002",
+      "fechaHora": "2024-01-15T11:00:00Z",
+      "cliente": "Cliente Test 2"
+    },
+    "ultimoMovimiento": {
+      "id": 2,
+      "estadoFinal": {
+        "id": 1,
+        "nombre": "PENDIENTE"
+      },
+      "fechaHora": "2024-01-15T11:00:00Z",
+      "usuario": {
+        "username": "admin"
+      }
+    }
+  },
+  {
+    "pedido": {
+      "idPedido": "PED-003",
+      "fechaHora": "2024-01-15T12:00:00Z",
+      "cliente": "Cliente Test 3"
+    },
+    "ultimoMovimiento": {
+      "id": 3,
+      "estadoFinal": {
+        "id": 2,
+        "nombre": "EN_PREPARACION"
+      },
+      "fechaHora": "2024-01-15T12:00:00Z",
+      "usuario": {
+        "username": "armado"
+      }
+    }
+  },
+  {
+    "pedido": {
+      "idPedido": "PED-004",
+      "fechaHora": "2024-01-15T13:00:00Z",
+      "cliente": "Cliente Test 4"
+    },
+    "ultimoMovimiento": {
+      "id": 4,
+      "estadoFinal": {
+        "id": 3,
+        "nombre": "PREPARADO"
+      },
+      "fechaHora": "2024-01-15T13:00:00Z",
+      "usuario": {
+        "username": "armado"
+      }
+    }
+  }
+]

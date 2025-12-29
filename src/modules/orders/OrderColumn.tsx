@@ -1,7 +1,6 @@
 import React from 'react';
 import { OrderCard } from './OrderCard';
 import type { PedidoConMovimiento } from './order.types';
-import { ESTADO_IDS } from './order.types';
 
 interface OrderColumnProps {
   title: string;
@@ -30,8 +29,8 @@ export const OrderColumn: React.FC<OrderColumnProps> = ({
       >
         {orders.length > 0 ? (
           orders.map((order) => {
-            // Check if order is paid (estado final is PAGADO)
-            const isPaid = order.ultimoMovimiento.estadoFinal.id === ESTADO_IDS.PAGADO;
+            // Check if order is paid using the cobrado field
+            const isPaid = order.pedido.cobrado;
             
             return (
               <OrderCard

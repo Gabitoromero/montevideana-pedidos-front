@@ -23,6 +23,7 @@ export interface Movimiento {
 export interface Pedido {
   fechaHora: string;
   idPedido: string;
+  cobrado: boolean;
   fletero: {
     dsFletero: string;
   };

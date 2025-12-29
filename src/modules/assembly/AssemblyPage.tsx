@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
-import { AssemblyOrderCard } from './AssemblyOrderCard';
-import { AuthPopup } from './AuthPopup';
-import { ResultNotification } from './ResultNotification';
+import { OrderCard } from '../../shared/components/OrderCard';
+import { AuthPopup } from '../../shared/components/AuthPopup';
+import { ResultNotification } from '../../shared/components/ResultNotification';
 import { getOrdersByState } from '../orders/orders.service';
 
 import { createMovimiento } from './assembly.service';
@@ -227,7 +227,7 @@ export const AssemblyPage: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredOrders.map((order) => (
-                  <AssemblyOrderCard
+                  <OrderCard
                     key={`${order.pedido.fechaHora}-${order.pedido.idPedido}`}
                     order={order}
                     onClick={() => handleOrderClick(order)}

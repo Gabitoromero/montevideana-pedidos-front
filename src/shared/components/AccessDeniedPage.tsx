@@ -25,7 +25,7 @@ export const AccessDeniedPage: React.FC = () => {
           Contacta al administrador si crees que esto es un error.
         </p>
         
-        <Button onClick={() => navigate('/')} variant="primary" size="lg">
+        <Button onClick={() => navigate('/login')} variant="primary" size="lg">
           Volver al Inicio
         </Button>
       </div>
