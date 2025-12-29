@@ -6,7 +6,7 @@ import { getOrdersByState } from './orders.service';
 import type { PedidoConMovimiento } from './order.types';
 import { ESTADO_IDS } from './order.types';
 
-const POLLING_INTERVAL = 60000; // 60 seconds
+const POLLING_INTERVAL = 5000; // 5 seconds
 
 export const OrdersPage: React.FC = () => {
   const [pendingOrders, setPendingOrders] = useState<PedidoConMovimiento[]>([]);
