@@ -67,6 +67,12 @@ class UserService {
     return response.data.data.message;
   }
 
+  /**
+   * Eliminar un usuario definitivamente (eliminación física)
+   */
+  async deleteUser(id: number): Promise<void> {
+    await apiClient.delete(`/usuarios/${id}`);
+  }
 }
 
 export const userService = new UserService();

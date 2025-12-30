@@ -7,12 +7,14 @@ import { UserTable } from '../../shared/components/UserTable';
 import { userService, type Usuario } from './user.service';
 
 type SectorFilter = 'Todos' | 'admin' | 'armado' | 'facturacion' | 'CHESS';
+type StatusFilter = 'Todos' | 'Activos' | 'Inactivos';
 
 export const UserListPage: React.FC = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<Usuario[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
   const [sectorFilter, setSectorFilter] = useState<SectorFilter>('Todos');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('Activos');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,12 +23,22 @@ export const UserListPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (sectorFilter === 'Todos') {
-      setFilteredUsers(users);
-    } else {
-      setFilteredUsers(users.filter(u => u.sector === sectorFilter));
+    let filtered = users;
+    
+    // Filter by sector
+    if (sectorFilter !== 'Todos') {
+      filtered = filtered.filter(u => u.sector === sectorFilter);
     }
-  }, [sectorFilter, users]);
+    
+    // Filter by status
+    if (statusFilter === 'Activos') {
+      filtered = filtered.filter(u => u.activo);
+    } else if (statusFilter === 'Inactivos') {
+      filtered = filtered.filter(u => !u.activo);
+    }
+    
+    setFilteredUsers(filtered);
+  }, [sectorFilter, statusFilter, users]);
 
   const loadUsers = async () => {
     try {
@@ -46,7 +58,7 @@ export const UserListPage: React.FC = () => {
     navigate(`/users/edit/${id}`);
   };
 
-  const isFilterActive = sectorFilter !== 'Todos';
+  const isFilterActive = sectorFilter !== 'Todos' || statusFilter !== 'Todos';
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
@@ -72,27 +84,53 @@ export const UserListPage: React.FC = () => {
         </div>
 
         {/* Filter Section */}
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex items-center gap-4 flex-wrap">
           <Filter size={20} className="text-[var(--text-secondary)]" />
-          <label htmlFor="sector-filter" className="text-[var(--text-primary)] font-medium">
-            Filtrar por sector:
-          </label>
-          <select
-            id="sector-filter"
-            value={sectorFilter}
-            onChange={(e) => setSectorFilter(e.target.value as SectorFilter)}
-            className={`px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 ${
-              isFilterActive
-                ? 'border-[var(--accent)] bg-[var(--accent)]/10'
-                : 'border-[var(--border)]'
-            } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200`}
-          >
-            <option value="Todos">Todos</option>
-            <option value="admin">Admin</option>
-            <option value="armado">Armado</option>
-            <option value="facturacion">Facturación</option>
-            <option value="CHESS">CHESS</option>
-          </select>
+          
+          {/* Sector Filter */}
+          <div className="flex items-center gap-2">
+            <label htmlFor="sector-filter" className="text-[var(--text-primary)] font-medium">
+              Sector:
+            </label>
+            <select
+              id="sector-filter"
+              value={sectorFilter}
+              onChange={(e) => setSectorFilter(e.target.value as SectorFilter)}
+              className={`px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 ${
+                sectorFilter !== 'Todos'
+                  ? 'border-[var(--accent)] bg-[var(--accent)]/10'
+                  : 'border-[var(--border)]'
+              } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200`}
+            >
+              <option value="Todos">Todos</option>
+              <option value="admin">Admin</option>
+              <option value="armado">Armado</option>
+              <option value="facturacion">Facturación</option>
+              <option value="CHESS">CHESS</option>
+            </select>
+          </div>
+          
+          {/* Status Filter */}
+          <div className="flex items-center gap-2">
+            <label htmlFor="status-filter" className="text-[var(--text-primary)] font-medium">
+              Estado:
+            </label>
+            <select
+              id="status-filter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+              className={`px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 ${
+                statusFilter !== 'Todos'
+                  ? 'border-[var(--accent)] bg-[var(--accent)]/10'
+                  : 'border-[var(--border)]'
+              } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200`}
+            >
+              <option value="Todos">Todos</option>
+              <option value="Activos">Activos</option>
+              <option value="Inactivos">Inactivos</option>
+            </select>
+          </div>
+          
           {isFilterActive && (
             <span className="text-sm text-[var(--accent)] font-semibold">
               Mostrando {filteredUsers.length} de {users.length} usuarios
