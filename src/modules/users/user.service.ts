@@ -60,12 +60,13 @@ class UserService {
   }
 
   /**
-   * Dar de baja un usuario (baja lógica)
+   * Cambiar el estado de un usuario (activar/desactivar)
    */
-  async deactivateUser(id: number): Promise<Usuario> {
-    const response = await apiClient.put<{success: boolean; data: Usuario}>(`/usuarios/${id}`, { activo: false });
-    return response.data.data;
+  async cambiarEstadoUser(id: number): Promise<string> {
+    const response = await apiClient.patch<{success: boolean; data: { message: string }}>(`/usuarios/${id}/activar`);
+    return response.data.data.message;
   }
+
 }
 
 export const userService = new UserService();

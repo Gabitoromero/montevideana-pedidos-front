@@ -42,8 +42,12 @@ export const LoginPage = () => {
       }
     } catch (err: any) {
       console.error(err);
-      // Manejo básico de errores
-      setError('Credenciales incorrectas o error de conexión');
+
+      if (err.response?.data?.mensaje) {
+        setError(err.response.data.mensaje);
+      } else {
+        setError('Credenciales incorrectas o error de conexión');
+      }
     } finally {
       setIsLoading(false);
     }
