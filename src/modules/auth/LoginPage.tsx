@@ -43,8 +43,8 @@ export const LoginPage = () => {
     } catch (err: any) {
       console.error(err);
 
-      if (err.response?.data?.mensaje) {
-        setError(err.response.data.mensaje);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
       } else {
         setError('Credenciales incorrectas o error de conexión');
       }
@@ -88,7 +88,7 @@ export const LoginPage = () => {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ej: romi"
+              placeholder="Ej: pablo"
               icon={User}
               disabled={isLoading}
             />

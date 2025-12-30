@@ -8,10 +8,7 @@ describe('Login Page', () => {
 
   describe('Scenario 1: Successful Login', () => {
     it('should login successfully and redirect to home page', () => {
-      // Visit login page
-      cy.visit('/login');
-
-      // Mock successful login response
+      // Mock successful login response BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         body: {
@@ -19,17 +16,21 @@ describe('Login Page', () => {
           refreshToken: 'mock-refresh-token-456',
           user: {
             id: 1,
-            username: 'testuser',
-            nombre: 'Test User',
-            sector: 'ADMIN',
+            username: 'CHESS',
+            nombre: 'Test',
+            apellido: 'User',
+            sector: 'CHESS',
             activo: true,
           },
         },
       }).as('loginRequest');
 
+      // Visit login page
+      cy.visit('/login');
+
       // Fill in the form
-      cy.get('input[type="text"]').type('testuser');
-      cy.get('input[type="password"]').type('password123');
+      cy.get('input[type="text"]').type('CHESS');
+      cy.get('input[type="password"]').type('1234');
 
       // Submit the form
       cy.get('button[type="submit"]').click();
@@ -37,8 +38,8 @@ describe('Login Page', () => {
       // Wait for the API call
       cy.wait('@loginRequest');
 
-      // Assert redirect to home page
-      cy.url().should('eq', Cypress.config().baseUrl + '/');
+      // Wait for navigation to complete and assert redirect to home page
+      cy.url().should('eq', Cypress.config().baseUrl + '/', { timeout: 10000 });
 
       // Assert localStorage contains auth data
       cy.window().then((window) => {
@@ -50,23 +51,24 @@ describe('Login Page', () => {
         expect(parsedAuth.state.accessToken).to.equal('mock-access-token-123');
         expect(parsedAuth.state.refreshToken).to.equal('mock-refresh-token-456');
         expect(parsedAuth.state.user).to.exist;
-        expect(parsedAuth.state.user.username).to.equal('testuser');
+        expect(parsedAuth.state.user.username).to.equal('CHESS');
+        expect(parsedAuth.state.isAuthenticated).to.be.true;
       });
     });
   });
 
   describe('Scenario 2: Failed Login (401 Error)', () => {
     it('should display error message on failed login', () => {
-      // Visit login page
-      cy.visit('/login');
-
-      // Mock failed login response (401 Unauthorized)
+      // Mock failed login response (401 Unauthorized) BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 401,
         body: {
           message: 'Invalid credentials',
         },
       }).as('loginRequest');
+
+      // Visit login page
+      cy.visit('/login');
 
       // Fill in the form with invalid credentials
       cy.get('input[type="text"]').type('wronguser');
@@ -115,18 +117,18 @@ describe('Login Page', () => {
     });
 
     it('should disable form during submission', () => {
-      cy.visit('/login');
-
-      // Mock a delayed response
+      // Mock a delayed response BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         delay: 1000,
         body: {
           accessToken: 'mock-token',
           refreshToken: 'mock-refresh',
-          user: { id: 1, username: 'test', nombre: 'Test', sector: 'ADMIN', activo: true },
+          user: { id: 1, username: 'test', nombre: 'Test', sector: 'admin', activo: true },
         },
       }).as('loginRequest');
+
+      cy.visit('/login');
 
       cy.get('input[type="text"]').type('testuser');
       cy.get('input[type="password"]').type('password');

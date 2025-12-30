@@ -13,16 +13,16 @@ describe('Assembly Page - Movement Creation', () => {
         refreshToken: 'admin-refresh',
         user: {
           id: 1,
-          username: 'admin',
-          nombre: 'Admin',
-          sector: 'admin',
+          username: 'CHESS',
+          nombre: 'Sistema',
+          sector: 'CHESS',
           activo: true,
         },
       },
     }).as('login');
 
-    cy.get('input[type="text"]').type('admin');
-    cy.get('input[type="password"]').type('admin123');
+    cy.get('input[type="text"]').type('CHESS');
+    cy.get('input[type="password"]').type('1234');
     cy.get('button[type="submit"]').click();
     cy.wait('@login');
   });
