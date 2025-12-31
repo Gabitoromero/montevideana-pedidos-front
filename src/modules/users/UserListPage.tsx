@@ -45,10 +45,31 @@ export const UserListPage: React.FC = () => {
       setLoading(true);
       setError(null);
       const data = await userService.getAllUsers();
-      setUsers(data);
-      setFilteredUsers(data);
+      
+      // Asegurar que data es un array
+      if (Array.isArray(data)) {
+        setUsers(data);
+        setFilteredUsers(data);
+      } else {
+        console.error('getAllUsers did not return an array:', data);
+        setUsers([]);
+        setFilteredUsers([]);
+        setError('Error: formato de datos inválido');
+      }
     } catch (err: any) {
-      setError(err.response?.data?.mensaje || err.response?.data?.message || 'Error al cargar usuarios');
+      console.error('Error loading users:', err);
+      console.error('Error response:', err.response);
+      
+      // IMPORTANTE: Resetear a arrays vacíos en caso de error
+      setUsers([]);
+      setFilteredUsers([]);
+      
+      // Manejar diferentes tipos de errores
+      if (err.response?.status === 429) {
+        setError('Demasiadas peticiones. Por favor, intenta de nuevo más tarde.');
+      } else {
+        setError(err.response?.data?.mensaje || err.response?.data?.message || 'Error al cargar usuarios');
+      }
     } finally {
       setLoading(false);
     }

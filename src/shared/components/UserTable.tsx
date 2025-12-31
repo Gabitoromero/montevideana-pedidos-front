@@ -27,7 +27,7 @@ export const UserTable: React.FC<UserTableProps> = ({ users, onUserClick }) => {
           </tr>
         </thead>
         <tbody>
-          {users.length === 0 ? (
+          {!users || users.length === 0 ? (
             <tr>
               <td colSpan={5} className="text-center py-8 text-[var(--text-secondary)]">
                 No se encontraron usuarios

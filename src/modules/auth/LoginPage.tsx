@@ -38,12 +38,47 @@ export const LoginPage = () => {
         navigate('/');
       }
     } catch (err: any) {
-      console.error(err);
+      // 🔍 DEBUG: Log completo del error para ver la estructura
+      // console.error('❌ Login Error - Full Error Object:', err);
+      // console.error('❌ Login Error - Response:', err.response);
+      // console.error('❌ Login Error - Response Data:', err.response?.data);
+      // console.error('❌ Login Error - Response Status:', err.response?.status);
+      // console.error('❌ Login Error - Response Headers:', err.response?.headers);
 
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
+      // Manejar diferentes tipos de errores
+      if (err.response) {
+        // El servidor respondió con un código de error
+        const status = err.response.status;
+        const data = err.response.data;
+
+        // Rate limit error (429)
+        if (status === 429) {
+          // express-rate-limit puede enviar el mensaje de diferentes formas
+          const rateLimitMessage = 
+            data?.message || 
+            data?.error || 
+            data || 
+            'Demasiados intentos de login. Por favor, intenta de nuevo en 15 minutos.';
+          
+          console.log('🚫 Rate Limit Message:', rateLimitMessage);
+          setError(typeof rateLimitMessage === 'string' ? rateLimitMessage : JSON.stringify(rateLimitMessage));
+        } 
+        // Credenciales incorrectas (401)
+        else if (status === 401) {
+          setError(data?.message || 'Credenciales incorrectas');
+        }
+        // Otros errores del servidor
+        else {
+          setError(data?.message || 'Error del servidor. Intenta de nuevo.');
+        }
+      } else if (err.request) {
+        // La petición se hizo pero no hubo respuesta
+        console.error('❌ No response received:', err.request);
+        setError('Error de conexión. Verifica tu conexión a internet.');
       } else {
-        setError('Credenciales incorrectas o error de conexión');
+        // Algo pasó al configurar la petición
+        console.error('❌ Error setting up request:', err.message);
+        setError('Error inesperado. Intenta de nuevo.');
       }
     } finally {
       setIsLoading(false);
