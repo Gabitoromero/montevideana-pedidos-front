@@ -6,10 +6,7 @@ import { Input } from '../../shared/components/Input';
 import { Button } from '../../shared/components/Button';
 import { getDefaultRouteForSector } from '../../shared/config/routes';
 import { useAuthStore } from '../../store/auth.store';
-// import logo from '../../assets/logo.png';
-// import logo1 from '../../assets/logoMontevideana.svg';
-// import logo2 from '../../assets/logo2.svg';
-import logo3 from '../../assets/ultima.png';
+import logotest from '../../assets/logotest.png';
 
 
 export const LoginPage = () => {
@@ -60,7 +57,7 @@ export const LoginPage = () => {
         {/* Logo Principal */}
         <div className="text-center mb-8">
           <img 
-            src={logo3} 
+            src={logotest} 
             alt="La Montevideana System" 
             className="w-64 h-64 object-contain mx-auto mb-4 animate-pulse-slow"
           />

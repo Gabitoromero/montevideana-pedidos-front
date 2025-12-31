@@ -11,7 +11,7 @@ export const Sidebar: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const { theme, toggleTheme } = useThemeStore();
 
-  const isAdmin = user?.sector === 'admin';
+  const isAdminOrChess = user?.sector === 'admin' || user?.sector === 'CHESS';
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -70,8 +70,8 @@ export const Sidebar: React.FC = () => {
 
           {/* Navigation Items */}
           <nav className="flex-1 space-y-2">
-            {/* User Management - Only for Admin */}
-            {isAdmin && (
+            {/* User Management - For Admin and CHESS */}
+            {isAdminOrChess && (
               <button
                 onClick={() => handleNavigation('/users')}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"
@@ -81,8 +81,8 @@ export const Sidebar: React.FC = () => {
               </button>
             )}
 
-            {/* Fleteros Management - Only for Admin */}
-            {isAdmin && (
+            {/* Fleteros Management - For Admin and CHESS */}
+            {isAdminOrChess && (
               <button
                 onClick={() => handleNavigation('/fleteros')}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"
