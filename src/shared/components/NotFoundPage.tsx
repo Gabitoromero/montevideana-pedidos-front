@@ -2,7 +2,7 @@ import React from 'react';
 import { AlertCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
-import logo from '../../assets/logo.png';
+import logotest from '../../assets/logotest.png';
 
 export const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export const NotFoundPage: React.FC = () => {
         {/* Logo */}
         <div className="mb-8 flex justify-center">
           <img 
-            src={logo} 
+            src={logotest} 
             alt="La Montevideana System" 
             className="w-32 h-32 object-contain opacity-50"
           />
