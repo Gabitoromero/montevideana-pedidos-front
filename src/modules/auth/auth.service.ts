@@ -33,35 +33,19 @@ class AuthService {
         username,
         password,
       });
-
-      // 🔍 DEBUG: Log complete response
-      console.log('🔍 Login Response COMPLETA:', response.data);
       
       // Extract data from wrapped response
       const { data } = response.data;
       const { accessToken, refreshToken, user } = data;
 
-      // 🔍 DEBUG: Log extracted values
-      console.log('🔍 Data extraída:', data);
-      console.log('🔍 AccessToken extraído:', accessToken ? 'SÍ' : 'NO');
-      console.log('🔍 RefreshToken extraído:', refreshToken ? 'SÍ' : 'NO');
-      console.log('🔍 User extraído:', user);
-
       // Validate user exists
       if (!user) {
-        console.error('❌ ERROR: Backend no devolvió el usuario!');
         throw new Error('Usuario no recibido del backend');
       }
 
       // Store both tokens and user in Zustand store
       useAuthStore.getState().setLogin(accessToken, refreshToken, user);
-      
-      // 🔍 DEBUG: Verify store was updated
-      const storeUser = useAuthStore.getState().user;
-      console.log('✅ User guardado en AuthStore:', storeUser);
-      console.log('✅ isAuthenticated:', useAuthStore.getState().isAuthenticated);
     } catch (error) {
-      console.error('❌ Error en login:', error);
       // Re-throw the error to be handled by the caller
       throw error;
     }

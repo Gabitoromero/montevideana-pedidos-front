@@ -7,9 +7,7 @@ describe('Login & Logout Flow', () => {
 
   describe('Successful Login', () => {
     it('should login successfully with valid credentials', () => {
-      cy.visit('/login');
-
-      // Mock successful login
+      // Mock successful login BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         body: {
@@ -26,6 +24,8 @@ describe('Login & Logout Flow', () => {
         },
       }).as('loginRequest');
 
+      cy.visit('/login');
+
       // Fill form
       cy.get('input[type="text"]').type('admin');
       cy.get('input[type="password"]').type('password123');
@@ -34,8 +34,8 @@ describe('Login & Logout Flow', () => {
       // Wait for request
       cy.wait('@loginRequest');
 
-      // Verify redirect to home
-      cy.url().should('eq', Cypress.config().baseUrl + '/');
+      // Verify redirect to home with timeout
+      cy.url().should('eq', Cypress.config().baseUrl + '/', { timeout: 5000 });
 
       // Verify localStorage
       cy.window().then((window) => {
@@ -44,21 +44,23 @@ describe('Login & Logout Flow', () => {
         
         const parsedAuth = JSON.parse(authStorage!);
         expect(parsedAuth.state.accessToken).to.equal('mock-access-token');
+        expect(parsedAuth.state.refreshToken).to.equal('mock-refresh-token');
         expect(parsedAuth.state.isAuthenticated).to.be.true;
       });
     });
 
     it('should persist session after page reload', () => {
-      // Login first
-      cy.visit('/login');
+      // Mock login BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         body: {
           accessToken: 'mock-token',
           refreshToken: 'mock-refresh',
-          user: { id: 1, username: 'test', nombre: 'Test', sector: 'admin', activo: true },
+          user: { id: 1, username: 'test', nombre: 'Test', apellido: 'User', sector: 'admin', activo: true },
         },
       }).as('login');
+
+      cy.visit('/login');
 
       cy.get('input[type="text"]').type('test');
       cy.get('input[type="password"]').type('pass');
@@ -71,23 +73,25 @@ describe('Login & Logout Flow', () => {
       // Should still be on home page
       cy.url().should('include', '/');
       
-      // Verify localStorage still has data
+      // Verify localStorage still has data and isAuthenticated
       cy.window().then((window) => {
         const authStorage = window.localStorage.getItem('auth-storage');
         expect(authStorage).to.exist;
+        const parsedAuth = JSON.parse(authStorage!);
+        expect(parsedAuth.state.isAuthenticated).to.be.true;
       });
     });
   });
 
   describe('Failed Login', () => {
     it('should show error message with invalid credentials', () => {
-      cy.visit('/login');
-
-      // Mock failed login
+      // Mock failed login BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 401,
         body: { message: 'Invalid credentials' },
       }).as('loginRequest');
+
+      cy.visit('/login');
 
       cy.get('input[type="text"]').type('wronguser');
       cy.get('input[type="password"]').type('wrongpass');
@@ -124,16 +128,17 @@ describe('Login & Logout Flow', () => {
 
   describe('Logout', () => {
     it('should logout from home page', () => {
-      // Login first
-      cy.visit('/login');
+      // Mock login BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         body: {
           accessToken: 'token',
           refreshToken: 'refresh',
-          user: { id: 1, username: 'test', nombre: 'Test', sector: 'admin', activo: true },
+          user: { id: 1, username: 'test', nombre: 'Test', apellido: 'User', sector: 'admin', activo: true },
         },
       }).as('login');
+
+      cy.visit('/login');
 
       cy.get('input[type="text"]').type('test');
       cy.get('input[type="password"]').type('pass');
@@ -201,17 +206,18 @@ describe('Login & Logout Flow', () => {
     });
 
     it('should show loading state during login', () => {
-      cy.visit('/login');
-
+      // Mock delayed login BEFORE visiting
       cy.intercept('POST', '/api/auth/login', {
         statusCode: 200,
         delay: 1000,
         body: {
           accessToken: 'token',
           refreshToken: 'refresh',
-          user: { id: 1, username: 'test', nombre: 'Test', sector: 'admin', activo: true },
+          user: { id: 1, username: 'test', nombre: 'Test', apellido: 'User', sector: 'admin', activo: true },
         },
       }).as('login');
+
+      cy.visit('/login');
 
       cy.get('input[type="text"]').type('test');
       cy.get('input[type="password"]').type('pass');

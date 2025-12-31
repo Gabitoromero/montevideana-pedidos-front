@@ -66,13 +66,15 @@ export const OrdersPage: React.FC = () => {
     // Set mounted flag
     isMountedRef.current = true;
 
-    // Initial fetch
-    fetchAllOrders();
-
-    // Setup polling interval
-    pollingIntervalRef.current = setInterval(() => {
-      fetchAllOrders();
-    }, POLLING_INTERVAL);
+    // Initial fetch, then setup polling
+    fetchAllOrders().then(() => {
+      // Only setup polling if component is still mounted
+      if (isMountedRef.current) {
+        pollingIntervalRef.current = setInterval(() => {
+          fetchAllOrders();
+        }, POLLING_INTERVAL);
+      }
+    });
 
     // Cleanup on unmount
     return () => {

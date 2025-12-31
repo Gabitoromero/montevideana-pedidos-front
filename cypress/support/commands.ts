@@ -19,8 +19,7 @@
  * @param apellido - User last name (optional, defaults to 'User')
  */
 Cypress.Commands.add('login', (username: string, password: string, sector: string, nombre?: string, apellido?: string) => {
-  cy.visit('/login');
-  
+  // Setup intercept BEFORE visiting the page
   cy.intercept('POST', '/api/auth/login', {
     statusCode: 200,
     body: {
@@ -36,6 +35,9 @@ Cypress.Commands.add('login', (username: string, password: string, sector: strin
       },
     },
   }).as('loginRequest');
+  
+  // Now visit the login page
+  cy.visit('/login');
   
   cy.get('input[type="text"]').type(username);
   cy.get('input[type="password"]').type(password);

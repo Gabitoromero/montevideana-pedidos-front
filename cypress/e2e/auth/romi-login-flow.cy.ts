@@ -7,10 +7,7 @@ describe('Complete User Flow - Romi Login', () => {
   });
 
   it('should login as "romi" and display all 3 sector options on HomePage', () => {
-    // 1. Visit login page
-    cy.visit('/login');
-
-    // 2. Mock successful login response for user "romi" with sector "admin"
+    // Mock successful login response BEFORE visiting
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 200,
       body: {
@@ -27,7 +24,10 @@ describe('Complete User Flow - Romi Login', () => {
       },
     }).as('loginRequest');
 
-    // 3. Fill in the login form
+    // Visit login page
+    cy.visit('/login');
+
+    // Fill in the login form
     cy.get('input[type="text"]').should('be.visible').type('romi');
     cy.get('input[type="password"]').should('be.visible').type('1234');
 
@@ -74,9 +74,7 @@ describe('Complete User Flow - Romi Login', () => {
   });
 
   it('should navigate to each sector page when clicking cards', () => {
-    // Login first
-    cy.visit('/login');
-
+    // Mock login BEFORE visiting
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 200,
       body: {
@@ -92,6 +90,8 @@ describe('Complete User Flow - Romi Login', () => {
         },
       },
     }).as('loginRequest');
+
+    cy.visit('/login');
 
     cy.get('input[type="text"]').type('romi');
     cy.get('input[type="password"]').type('1234');
@@ -114,9 +114,7 @@ describe('Complete User Flow - Romi Login', () => {
   });
 
   it('should display logout button on HomePage', () => {
-    // Login first
-    cy.visit('/login');
-
+    // Mock login BEFORE visiting
     cy.intercept('POST', '/api/auth/login', {
       statusCode: 200,
       body: {
@@ -132,6 +130,8 @@ describe('Complete User Flow - Romi Login', () => {
         },
       },
     }).as('loginRequest');
+
+    cy.visit('/login');
 
     cy.get('input[type="text"]').type('romi');
     cy.get('input[type="password"]').type('1234');

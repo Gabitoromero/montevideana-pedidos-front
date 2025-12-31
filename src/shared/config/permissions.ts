@@ -97,16 +97,12 @@ export function hasAccess(userSector: string, routePath: string): boolean {
  */
 export function getAccessibleRoutes(userSector: string | undefined): RoutePermission[] {
   if (!userSector) {
-    console.warn('getAccessibleRoutes: userSector is undefined');
     return [];
   }
   
-  const accessibleRoutes = ROUTE_PERMISSIONS.filter(route =>
+  return ROUTE_PERMISSIONS.filter(route =>
     route.allowedSectors.includes(userSector as Sector)
   );
-  
-  console.log('getAccessibleRoutes:', { userSector, accessibleRoutes });
-  
-  return accessibleRoutes;
 }
+
 
