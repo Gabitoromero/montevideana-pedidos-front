@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Users, Truck, Sun, Moon, Info, LogOut, Activity } from 'lucide-react';
+import { X, Users, Truck, Sun, Moon, LogOut, Activity } from 'lucide-react';
 import { useAuthStore } from '../../store/auth.store';
 import { useThemeStore } from '../../store/theme.store';
 import { authService } from '../../modules/auth/auth.service';
@@ -121,14 +121,14 @@ export const Sidebar: React.FC = () => {
               )}
             </button>
 
-            {/* System Info - Placeholder */}
+            {/* System Info - Placeholder 
             <button
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group opacity-50 cursor-not-allowed"
               disabled
             >
               <Info size={20} className="text-[var(--text-secondary)]" />
               <span className="text-[var(--text-secondary)] font-medium">Info del Sistema</span>
-            </button>
+            </button>*/}
           </nav>
 
           {/* Logout Button */}
