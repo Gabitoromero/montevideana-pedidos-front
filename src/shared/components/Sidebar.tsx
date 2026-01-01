@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Users, Truck, Sun, Moon, Info, LogOut } from 'lucide-react';
+import { X, Users, Truck, Sun, Moon, Info, LogOut, Activity } from 'lucide-react';
 import { useAuthStore } from '../../store/auth.store';
 import { useThemeStore } from '../../store/theme.store';
 import { authService } from '../../modules/auth/auth.service';
@@ -89,6 +89,17 @@ export const Sidebar: React.FC = () => {
               >
                 <Truck size={20} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
                 <span className="text-[var(--text-primary)] font-medium">Gestión de Fleteros</span>
+              </button>
+            )}
+
+            {/* Movimientos - For Admin and CHESS */}
+            {isAdminOrChess && (
+              <button
+                onClick={() => handleNavigation('/movimientos')}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"
+              >
+                <Activity size={20} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
+                <span className="text-[var(--text-primary)] font-medium">Movimientos</span>
               </button>
             )}
 

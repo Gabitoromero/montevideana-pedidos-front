@@ -12,6 +12,10 @@ import { UserListPage } from './modules/users/UserListPage';
 import { CreateUserPage } from './modules/users/CreateUserPage';
 import { EditUserPage } from './modules/users/EditUserPage';
 import { FleterosListPage } from './modules/fleteros/FleterosListPage';
+import { MovimientosIndexPage } from './modules/movimientos/MovimientosIndexPage';
+import { MovimientosByUsuarioPage } from './modules/movimientos/MovimientosByUsuarioPage';
+import { MovimientosByEstadoPage } from './modules/movimientos/MovimientosByEstadoPage';
+import { MovimientosHistorialPage } from './modules/movimientos/MovimientosHistorialPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
 import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
 import { authService } from './modules/auth/auth.service';
@@ -132,6 +136,43 @@ function App() {
             element={
               <ProtectedRoute>
                 <FleterosListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Movimientos Routes */}
+          <Route
+            path="/movimientos"
+            element={
+              <ProtectedRoute>
+                <MovimientosIndexPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/movimientos/usuario"
+            element={
+              <ProtectedRoute>
+                <MovimientosByUsuarioPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/movimientos/estado"
+            element={
+              <ProtectedRoute>
+                <MovimientosByEstadoPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/movimientos/historial"
+            element={
+              <ProtectedRoute>
+                <MovimientosHistorialPage />
               </ProtectedRoute>
             }
           />

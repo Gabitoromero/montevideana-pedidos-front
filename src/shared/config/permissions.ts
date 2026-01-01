@@ -52,6 +52,26 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
     allowedSectors: ['admin'],
     label: 'Gestión de Fleteros'
   },
+  {
+    path: '/movimientos',
+    allowedSectors: ['admin', 'CHESS'],
+    label: 'Consulta de Movimientos'
+  },
+  {
+    path: '/movimientos/usuario',
+    allowedSectors: ['admin', 'CHESS'],
+    label: 'Movimientos por Usuario'
+  },
+  {
+    path: '/movimientos/estado',
+    allowedSectors: ['admin', 'CHESS'],
+    label: 'Movimientos por Estado'
+  },
+  {
+    path: '/movimientos/historial',
+    allowedSectors: ['admin', 'CHESS'],
+    label: 'Historial de Pedido'
+  },
 ];
 
 /**
