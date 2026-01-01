@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ListOrdered, Package, DollarSign, Activity } from 'lucide-react';
+import { ListOrdered, Package, DollarSign } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { useAuthStore } from '../../store/auth.store';
@@ -71,12 +71,6 @@ export const HomePage: React.FC = () => {
       title: 'Facturación',
       description: 'Gestión de facturas y pagos',
       icon: <DollarSign size={48} />
-    },
-    {
-      path: '/movimientos',
-      title: 'Movimientos',
-      description: 'Consulta de movimientos de pedidos',
-      icon: <Activity size={48} />
     },
   ];
 
