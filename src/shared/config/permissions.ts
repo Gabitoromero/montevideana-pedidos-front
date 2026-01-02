@@ -29,27 +29,27 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
   },
   {
     path: '/users',
-    allowedSectors: ['admin'],
+    allowedSectors: ['admin', 'CHESS'],
     label: 'Gestión de Usuarios'
   },
   {
     path: '/users/list',
-    allowedSectors: ['admin'],
+    allowedSectors: ['admin', 'CHESS'],
     label: 'Lista de Usuarios'
   },
   {
     path: '/users/create',
-    allowedSectors: ['admin'],
+    allowedSectors: ['admin', 'CHESS'],
     label: 'Crear Usuario'
   },
   {
     path: '/users/edit/:id',
-    allowedSectors: ['admin', 'armado', 'facturacion', 'CHESS'], // Todos pueden editar su propio perfil
+    allowedSectors: ['admin', 'CHESS'], // Todos pueden editar su propio perfil
     label: 'Editar Usuario'
   },
   {
     path: '/fleteros',
-    allowedSectors: ['admin'],
+    allowedSectors: ['admin', 'CHESS'],
     label: 'Gestión de Fleteros'
   },
   {
