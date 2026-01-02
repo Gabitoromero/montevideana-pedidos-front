@@ -12,15 +12,13 @@ describe('Auth Store', () => {
     it('should have unauthenticated initial state', () => {
       const state = useAuthStore.getState();
       
-      expect(state.accessToken).toBeNull();
-      expect(state.refreshToken).toBeNull();
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
     });
   });
 
   describe('setLogin', () => {
-    it('should update user and tokens when calling setLogin', () => {
+    it('should update user when calling setLogin', () => {
       const mockUser: User = {
         id: 1,
         username: 'testuser',
@@ -28,15 +26,11 @@ describe('Auth Store', () => {
         apellido: 'User',
         sector: 'IT',
       };
-      const mockAccessToken = 'mock-access-token-123';
-      const mockRefreshToken = 'mock-refresh-token-456';
 
-      useAuthStore.getState().setLogin(mockAccessToken, mockRefreshToken, mockUser);
+      useAuthStore.getState().setLogin(mockUser);
       
       const state = useAuthStore.getState();
       
-      expect(state.accessToken).toBe(mockAccessToken);
-      expect(state.refreshToken).toBe(mockRefreshToken);
       expect(state.user).toEqual(mockUser);
       expect(state.isAuthenticated).toBe(true);
     });
@@ -50,7 +44,7 @@ describe('Auth Store', () => {
         sector: 'Sales',
       };
 
-      useAuthStore.getState().setLogin('token-1', 'token-2', mockUser);
+      useAuthStore.getState().setLogin(mockUser);
       
       // Get a fresh reference to the store
       const newState = useAuthStore.getState();
@@ -61,7 +55,7 @@ describe('Auth Store', () => {
   });
 
   describe('setUser', () => {
-    it('should update only the user without affecting tokens', () => {
+    it('should update the user', () => {
       const initialUser: User = {
         id: 1,
         username: 'user1',
@@ -70,7 +64,7 @@ describe('Auth Store', () => {
         sector: 'IT',
       };
       
-      useAuthStore.getState().setLogin('access-token', 'refresh-token', initialUser);
+      useAuthStore.getState().setLogin(initialUser);
       
       const updatedUser: User = {
         id: 1,
@@ -85,8 +79,6 @@ describe('Auth Store', () => {
       const state = useAuthStore.getState();
       
       expect(state.user).toEqual(updatedUser);
-      expect(state.accessToken).toBe('access-token');
-      expect(state.refreshToken).toBe('refresh-token');
       expect(state.isAuthenticated).toBe(true);
     });
   });
@@ -102,7 +94,7 @@ describe('Auth Store', () => {
       };
 
       // First login
-      useAuthStore.getState().setLogin('access-token', 'refresh-token', mockUser);
+      useAuthStore.getState().setLogin(mockUser);
       
       // Verify logged in
       expect(useAuthStore.getState().isAuthenticated).toBe(true);
@@ -112,8 +104,6 @@ describe('Auth Store', () => {
       
       const state = useAuthStore.getState();
       
-      expect(state.accessToken).toBeNull();
-      expect(state.refreshToken).toBeNull();
       expect(state.user).toBeNull();
       expect(state.isAuthenticated).toBe(false);
     });
