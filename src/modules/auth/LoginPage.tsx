@@ -7,6 +7,7 @@ import { Button } from '../../shared/components/Button';
 import { getDefaultRouteForSector } from '../../shared/config/routes';
 import { useAuthStore } from '../../store/auth.store';
 import logotest from '../../assets/logotest.png';
+import { logger } from '../../utils/logger';
 
 
 export const LoginPage = () => {
@@ -60,7 +61,7 @@ export const LoginPage = () => {
             data || 
             'Demasiados intentos de login. Por favor, intenta de nuevo en 15 minutos.';
           
-          console.log('🚫 Rate Limit Message:', rateLimitMessage);
+          logger.log('🚫 Rate Limit Message:', rateLimitMessage);
           setError(typeof rateLimitMessage === 'string' ? rateLimitMessage : JSON.stringify(rateLimitMessage));
         } 
         // Credenciales incorrectas (401)
@@ -73,11 +74,11 @@ export const LoginPage = () => {
         }
       } else if (err.request) {
         // La petición se hizo pero no hubo respuesta
-        console.error('❌ No response received:', err.request);
+        logger.error('❌ No response received:', err.request);
         setError('Error de conexión. Verifica tu conexión a internet.');
       } else {
         // Algo pasó al configurar la petición
-        console.error('❌ Error setting up request:', err.message);
+        logger.error('❌ Error setting up request:', err.message);
         setError('Error inesperado. Intenta de nuevo.');
       }
     } finally {
