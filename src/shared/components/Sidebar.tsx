@@ -18,8 +18,8 @@ export const Sidebar: React.FC = () => {
     setIsOpen(false);
   };
 
-  const handleLogout = () => {
-    authService.logout();
+  const handleLogout = async () => {
+    await authService.logout();
     navigate('/login');
   };
 

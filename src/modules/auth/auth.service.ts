@@ -9,19 +9,17 @@ interface BackendResponse<T> {
 }
 
 interface LoginData {
-  accessToken: string;
-  refreshToken: string;
   user: User;
 }
 
-interface RefreshData {
-  accessToken: string;
-  user: User;
+interface LogoutResponse {
+  message: string;
 }
 
 class AuthService {
   /**
    * Login with username and password
+   * Tokens are set as HTTP-only cookies by the backend
    * @param username - User's username
    * @param password - User's password
    * @returns Promise that resolves when login is successful
@@ -29,22 +27,22 @@ class AuthService {
   async login(username: string, password: string): Promise<void> {
     try {
       // Call the backend login endpoint
+      // Backend sets accessToken and refreshToken as HTTP-only cookies
       const response = await apiClient.post<BackendResponse<LoginData>>('/auth/login', {
         username,
         password,
       });
       
-      // Extract data from wrapped response
-      const { data } = response.data;
-      const { accessToken, refreshToken, user } = data;
+      // Extract user from response (no tokens in JSON anymore)
+      const { user } = response.data.data;
 
       // Validate user exists
       if (!user) {
         throw new Error('Usuario no recibido del backend');
       }
 
-      // Store both tokens and user in Zustand store
-      useAuthStore.getState().setLogin(accessToken, refreshToken, user);
+      // Store only user in Zustand store (tokens are in cookies)
+      useAuthStore.getState().setLogin(user);
     } catch (error) {
       // Re-throw the error to be handled by the caller
       throw error;
@@ -53,9 +51,19 @@ class AuthService {
 
   /**
    * Logout the current user
+   * Calls backend to clear HTTP-only cookies
    */
-  logout(): void {
-    useAuthStore.getState().logout();
+  async logout(): Promise<void> {
+    try {
+      // Call backend logout endpoint to clear cookies
+      await apiClient.post<BackendResponse<LogoutResponse>>('/auth/logout');
+    } catch (error) {
+      // Even if backend call fails, clear local state
+      console.error('Error during logout:', error);
+    } finally {
+      // Always clear local auth state
+      useAuthStore.getState().logout();
+    }
   }
 
   /**
@@ -74,56 +82,45 @@ class AuthService {
 
   /**
    * Refresh user data from backend
-   * Validates the token and updates user info from server
+   * Validates the cookie and updates user info from server
    * @returns Promise that resolves with user data or null if invalid
    */
   async refreshUser(): Promise<User | null> {
     try {
-      const accessToken = useAuthStore.getState().accessToken;
-      if (!accessToken) {
-        return null;
-      }
-
-      // Call backend to validate token and get fresh user data
+      // Call backend to validate cookie and get fresh user data
+      // No need to check for token - cookies are sent automatically
       const response = await apiClient.get<BackendResponse<User>>('/auth/me');
-      const user = response.data.data; // Extract from wrapped response
+      const user = response.data.data;
 
-      // Update user in store (tokens remain the same)
+      // Update user in store
       useAuthStore.getState().setUser(user);
       return user;
     } catch (error) {
-      // Token is invalid or expired, logout
-      this.logout();
+      // Cookie is invalid or expired, logout
+      await this.logout();
       return null;
     }
   }
 
   /**
-   * Refresh the access token using the refresh token
-   * @returns Promise that resolves with new access token or null if invalid
+   * Refresh the access token using the refresh token cookie
+   * @returns Promise that resolves with user data or null if invalid
    */
-  async refreshAccessToken(): Promise<string | null> {
+  async refreshAccessToken(): Promise<User | null> {
     try {
-      const refreshToken = useAuthStore.getState().refreshToken;
-      if (!refreshToken) {
-        return null;
-      }
-
       // Call backend to get new access token
-      const response = await apiClient.post<BackendResponse<RefreshData>>('/auth/refresh', {
-        refreshToken,
-      });
+      // Refresh token is sent automatically as HTTP-only cookie
+      const response = await apiClient.post<BackendResponse<LoginData>>('/auth/refresh');
 
-      const { accessToken, user } = response.data.data; // Extract from wrapped response
+      const { user } = response.data.data;
 
-      // Update access token and user in store (refresh token remains the same)
-      const currentRefreshToken = useAuthStore.getState().refreshToken!;
-      useAuthStore.getState().setLogin(accessToken, currentRefreshToken, user);
+      // Update user in store (new access token is set as cookie by backend)
+      useAuthStore.getState().setUser(user);
 
-      return accessToken;
+      return user;
     } catch (error) {
       // Refresh token is invalid or expired, logout
-      this.logout();
+      await this.logout();
       return null;
     }
   }

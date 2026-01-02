@@ -7,23 +7,12 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // ✅ Enable sending cookies with requests (HTTP-only cookies)
+  withCredentials: true,
 });
 
-// Request interceptor: Attach Authorization token
-apiClient.interceptors.request.use(
-  (config) => {
-    const accessToken = useAuthStore.getState().accessToken;
-    
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// ❌ REMOVED: Request interceptor for Authorization header
+// Cookies are sent automatically with withCredentials: true
 
 // Response interceptor: Handle 401 errors
 apiClient.interceptors.response.use(

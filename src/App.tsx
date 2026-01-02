@@ -24,13 +24,19 @@ function App() {
   const [isValidating, setIsValidating] = useState(true);
 
   useEffect(() => {
-    // Validate user on app load
+    // Validate user on app load by checking if cookies are valid
     const validateUser = async () => {
-      if (authService.isAuthenticated()) {
-        // Refresh user data from backend to sync with server
+      try {
+        // Try to get user data from backend using cookies
+        // If cookies are valid, this will return user data
+        // If cookies are invalid/expired, this will throw 401
         await authService.refreshUser();
+      } catch (error) {
+        // Cookies are invalid or don't exist, user is not authenticated
+        // authService.refreshUser() already handles logout on error
+      } finally {
+        setIsValidating(false);
       }
-      setIsValidating(false);
     };
 
     validateUser();
