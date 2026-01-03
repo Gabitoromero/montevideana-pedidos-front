@@ -114,7 +114,7 @@ export const OrdersPage: React.FC = () => {
 
       {/* Orders Grid */}
       {!isLoading && (
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           <OrderColumn
             title="PENDIENTE"
             orders={pendingOrders}
