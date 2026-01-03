@@ -9,11 +9,11 @@
   --text-primary: #ffffff;
   --text-secondary: #d1d5db;
   --text-tertiary: #9ca3af;
-  --primary: #A38A70;
-  --primary-light: #B89A7F;
-  --primary-dark: #8B7355;
-  --accent: #D4AF37;
-  --border: #D4AF37;
+  --primary: #a38a70;
+  --primary-light: #b89a7f;
+  --primary-dark: #8b7355;
+  --accent: #d4af37;
+  --border: #d4af37;
   --error: #ef4444;
   --success: #10b981;
 }
@@ -26,11 +26,11 @@
   --text-primary: #1a1a1a;
   --text-secondary: #2d2d2d;
   --text-tertiary: #4a4a4a;
-  --primary: #8B7355;
-  --primary-light: #A38A70;
+  --primary: #8b7355;
+  --primary-light: #a38a70;
   --primary-dark: #6d5a43;
-  --accent: #B8860B;
-  --border: #B8860B;
+  --accent: #b8860b;
+  --border: #b8860b;
   --error: #dc2626;
   --success: #059669;
 }
@@ -59,3 +59,8 @@ body {
   background-color: var(--primary-light);
 }
 
+/* PIN Input Security Masking - Prevents browser password warnings */
+.pin-input {
+  -webkit-text-security: disc;
+  font-family: text-security-disc; /* Fallback for some browsers */
+}

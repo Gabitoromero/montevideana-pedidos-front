@@ -128,13 +128,15 @@ export const LoginPage = () => {
 
             <Input
               label="Contraseña"
-              type="password"
+              type="text"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               icon={Lock}
               disabled={isLoading}
+              className="pin-input"
+              autoComplete="off"
             />
 
             <Button
