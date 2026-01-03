@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { Button } from '../../shared/components/Button';
-import { MovimientoCard } from './MovimientoCard';
+import { Card } from '../../shared/components/Card';
+import { MovimientosTable } from './MovimientosTable';
 import { movimientoService } from './movimiento.service';
 import type { Movimiento } from './movimiento.types';
 
@@ -131,12 +132,10 @@ export const MovimientosHistorialPage: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Grid de movimientos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {movimientos.map((movimiento, index) => (
-                    <MovimientoCard key={index} movimiento={movimiento} />
-                  ))}
-                </div>
+                {/* Tabla de movimientos */}
+                <Card padding="lg" className="bg-[var(--bg-secondary)] border-2 border-[var(--border)]">
+                  <MovimientosTable movimientos={movimientos} />
+                </Card>
               </>
             ) : (
               <div className="text-center py-12">
