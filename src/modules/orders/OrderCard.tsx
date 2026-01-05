@@ -27,7 +27,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, isPaid, hideOperato
       {/* Order ID */}
       <div
         className={`text-xl font-bold mb-2 ${
-          isPaid ? 'text-green-400' : ''
+          isPaid ? 'text-green-700' : ''
         }`}
         style={!isPaid ? { color: 'var(--error)' } : undefined}
       >

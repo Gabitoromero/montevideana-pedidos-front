@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ListOrdered, Package, DollarSign } from 'lucide-react';
+import { ListOrdered, Package, DollarSign, Menu } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { useAuthStore } from '../../store/auth.store';
@@ -40,6 +40,7 @@ const MenuCard: React.FC<MenuCardProps> = ({ title, description, icon, onClick }
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Redirigir automáticamente a usuarios no-admin/CHESS a su página específica
   useEffect(() => {
@@ -79,9 +80,22 @@ export const HomePage: React.FC = () => {
     accessibleRoutes.some(route => route.path === card.path)
   );
 
+  const isAdminOrChess = user?.sector === 'admin' || user?.sector === 'CHESS';
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8 relative">
-      <Sidebar />
+      {/* Hamburger Menu Button - Only for ADMIN/CHESS */}
+      {isAdminOrChess && (
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="fixed top-6 left-6 z-20 p-3 rounded-lg bg-[var(--bg-secondary)] border-2 border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/10 transition-all duration-200 group"
+          aria-label="Abrir menú"
+        >
+          <Menu size={24} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
+        </button>
+      )}
+
+      <Sidebar externalIsOpen={isSidebarOpen} externalSetIsOpen={setIsSidebarOpen} />
 
       <div className="max-w-6xl mx-auto">
         {/* Header with Logo */}

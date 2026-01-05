@@ -47,12 +47,16 @@ export const BillingPage: React.FC = () => {
     fetchOrders();
   }, [selectedState]);
 
-  // Filter orders by search query
+  // Filter orders by search query and unpaid status
   useEffect(() => {
+    // First filter: only unpaid orders (cobrado: false)
+    const unpaidOrders = orders.filter(order => order.pedido.cobrado === false);
+    
+    // Second filter: search by ID if query exists
     if (searchQuery.trim() === '') {
-      setFilteredOrders(orders);
+      setFilteredOrders(unpaidOrders);
     } else {
-      const filtered = orders.filter(order =>
+      const filtered = unpaidOrders.filter(order =>
         order.pedido.idPedido.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredOrders(filtered);

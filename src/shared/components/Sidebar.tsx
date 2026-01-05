@@ -5,13 +5,22 @@ import { useAuthStore } from '../../store/auth.store';
 import { useThemeStore } from '../../store/theme.store';
 import { authService } from '../../modules/auth/auth.service';
 
-export const Sidebar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface SidebarProps {
+  externalIsOpen?: boolean;
+  externalSetIsOpen?: (value: boolean) => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsOpen }) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const { theme, toggleTheme } = useThemeStore();
 
   const isAdminOrChess = user?.sector === 'admin' || user?.sector === 'CHESS';
+
+  // Use external control if provided, otherwise use internal state
+  const isOpen = externalIsOpen ?? internalIsOpen;
+  const setIsOpen = externalSetIsOpen ?? setInternalIsOpen;
 
   const handleNavigation = (path: string) => {
     navigate(path);
