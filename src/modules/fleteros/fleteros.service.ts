@@ -12,10 +12,16 @@ export interface UpdateSeguimientoDTO {
 
 class FleterosService {
   /**
-   * Obtener todos los fleteros activos (con seguimiento)
+   * Obtener todos los fleteros 
    */
   async getAllFleteros(): Promise<Fletero[]> {
     const response = await apiClient.get<{success: boolean; data: Fletero[]}>('/fleteros');
+    return response.data.data;
+  }
+
+  /* Obtener fleteros activos */
+  async getActiveFleteros(): Promise<Fletero[]> {
+    const response = await apiClient.get<{success: boolean; data: Fletero[]}>('/fleteros/activos');
     return response.data.data;
   }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Filter, Truck } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
@@ -18,24 +18,25 @@ export const FleterosListPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  useEffect(() => {
-    loadFleteros();
-  }, [filter]);
-
-  const loadFleteros = async () => {
+  const loadFleteros = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = filter === 'activos' 
-        ? await fleterosService.getAllFleteros()
+        ? await fleterosService.getActiveFleteros()
         : await fleterosService.getInactiveFleteros();
       setFleteros(data);
-    } catch (err: any) {
-      setError(err.response?.data?.mensaje || err.response?.data?.message || 'Error al cargar fleteros');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { mensaje?: string; message?: string } } };
+      setError(error.response?.data?.mensaje || error.response?.data?.message || 'Error al cargar fleteros');
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    loadFleteros();
+  }, [loadFleteros]);
 
   const handleFleterosClick = (fletero: Fletero) => {
     setSelectedFletero(fletero);
@@ -57,8 +58,9 @@ export const FleterosListPage: React.FC = () => {
       
       setShowModal(false);
       setSelectedFletero(null);
-    } catch (err: any) {
-      setError(err.response?.data?.mensaje || err.response?.data?.message || 'Error al actualizar seguimiento');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { mensaje?: string; message?: string } } };
+      setError(error.response?.data?.mensaje || error.response?.data?.message || 'Error al actualizar seguimiento');
     } finally {
       setIsUpdating(false);
     }
