@@ -16,9 +16,9 @@ export const MovimientosHistorialPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // Validar formato del ID de pedido: XXXX - XXXXXXXX
+  // Validar formato del ID de pedido: 8 dígitos numéricos
   const validatePedidoId = (id: string): boolean => {
-    const pattern = /^\d{4}\s-\s\d{8}$/;
+    const pattern = /^\d{8}$/;
     return pattern.test(id);
   };
 
@@ -29,7 +29,7 @@ export const MovimientosHistorialPage: React.FC = () => {
     }
 
     if (!validatePedidoId(idPedido)) {
-      setError('Formato inválido. Use el formato: XXXX - XXXXXXXX (ejemplo: 0001 - 00284936)');
+      setError('Formato inválido. Debe ingresar 8 dígitos numéricos (ejemplo: 00226957)');
       return;
     }
 
@@ -91,11 +91,11 @@ export const MovimientosHistorialPage: React.FC = () => {
                 value={idPedido}
                 onChange={(e) => setIdPedido(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ejemplo: 0001 - 00284936"
+                placeholder="Ejemplo: 00226957"
                 className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] font-mono"
               />
               <p className="text-xs text-[var(--text-tertiary)] mt-1">
-                Formato: XXXX - XXXXXXXX
+                Formato: 8 dígitos numéricos
               </p>
             </div>
           </div>

@@ -10,7 +10,7 @@ export interface MovimientoUsuario {
 // Movimiento individual
 export interface Movimiento {
   fechaHora: string; // ISO 8601 format
-  idPedido: string; // Formato: "XXXX - XXXXXXXX"
+  idPedido: string; // Formato: 8 dígitos (ej: "00226957")
   estadoInicial: EstadoPedido;
   estadoFinal: EstadoPedido;
   usuario: MovimientoUsuario;

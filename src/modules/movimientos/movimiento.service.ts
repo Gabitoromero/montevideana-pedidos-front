@@ -65,11 +65,11 @@ class MovimientoService {
 
   /**
    * Obtener historial completo de un pedido
-   * @param idPedido - ID del pedido con formato "XXXX - XXXXXXXX"
+   * @param idPedido - ID del pedido de 8 dígitos (ej: "00226957")
    * @returns Array de movimientos (sin paginación)
    */
   async getHistorialPedido(idPedido: string): Promise<Movimiento[]> {
-    // URL-encode el ID del pedido (espacios y guiones)
+    // URL-encode el ID del pedido por seguridad
     const encodedId = encodeURIComponent(idPedido);
 
     const response = await apiClient.get<MovimientosResponse>(
