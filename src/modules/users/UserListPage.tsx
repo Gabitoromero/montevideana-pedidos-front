@@ -6,7 +6,7 @@ import { Sidebar } from '../../shared/components/Sidebar';
 import { UserTable } from '../../shared/components/UserTable';
 import { userService, type Usuario } from './user.service';
 
-type SectorFilter = 'Todos' | 'admin' | 'armado' | 'facturacion' | 'CHESS';
+type SectorFilter = 'Todos' | 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS';
 type StatusFilter = 'Todos' | 'Activos' | 'Inactivos';
 
 export const UserListPage: React.FC = () => {
@@ -124,9 +124,9 @@ export const UserListPage: React.FC = () => {
               } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200`}
             >
               <option value="Todos">Todos</option>
-              <option value="admin">Admin</option>
-              <option value="armado">Armado</option>
-              <option value="facturacion">Facturación</option>
+              <option value="ADMIN">Admin</option>
+              <option value="CAMARA">Cámara</option>
+              <option value="EXPEDICION">Expedición</option>
               <option value="CHESS">CHESS</option>
             </select>
           </div>

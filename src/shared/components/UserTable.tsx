@@ -7,10 +7,10 @@ interface UserTableProps {
 }
 
 const SECTOR_COLORS = {
-  admin: 'var(--accent)',
-  armado: '#3b82f6',
-  facturacion: '#10b981',
-  CHESS: '#8b5cf6'
+  ADMIN: 'var(--accent)', // Dorado
+  CAMARA: '#3b82f6', // Azul
+  EXPEDICION: '#f59e0b', // Naranja
+  CHESS: '#8b5cf6' // Púrpura
 };
 
 export const UserTable: React.FC<UserTableProps> = ({ users, onUserClick }) => {

@@ -4,7 +4,7 @@ export interface CreateUsuarioDTO {
   username: string;
   nombre: string;
   apellido: string;
-  sector: 'admin' | 'armado' | 'facturacion';
+  sector: 'ADMIN' | 'CAMARA' | 'EXPEDICION';
   password: string;
 }
 
@@ -12,7 +12,7 @@ export interface UpdateUsuarioDTO {
   username?: string;
   nombre?: string;
   apellido?: string;
-  sector?: 'admin' | 'armado' | 'facturacion';
+  sector?: 'ADMIN' | 'CAMARA' | 'EXPEDICION';
   password?: string;
   activo?: boolean;
 }
@@ -22,7 +22,7 @@ export interface Usuario {
   username: string;
   nombre: string;
   apellido: string;
-  sector: 'admin' | 'armado' | 'facturacion' | 'CHESS';
+  sector: 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS';
   activo: boolean;
 }
 
