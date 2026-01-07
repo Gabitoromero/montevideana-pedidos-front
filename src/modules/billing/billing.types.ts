@@ -7,5 +7,5 @@ export const BILLING_FILTER_STATES = [
   { id: ESTADO_IDS.PREPARADO, name: 'PREPARADO' },
 ] as const;
 
-// Target state for billing (PAGADO)
-export const PAGADO_STATE_ID = ESTADO_IDS.PAGADO;
+// Target state for billing (TESORERÍA)
+export const TESORERIA_STATE_ID = ESTADO_IDS.TESORERIA;

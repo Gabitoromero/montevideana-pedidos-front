@@ -6,7 +6,7 @@ import { AuthPopup } from '../../shared/components/AuthPopup';
 import { ResultNotification } from '../../shared/components/ResultNotification';
 import { getOrdersByState } from '../orders/orders.service';
 import { createMovimiento } from '../assembly/assembly.service';
-import { BILLING_FILTER_STATES, PAGADO_STATE_ID } from './billing.types';
+import { BILLING_FILTER_STATES, TESORERIA_STATE_ID } from './billing.types';
 import type { PedidoConMovimiento } from '../orders/order.types';
 import type { CreateMovimientoRequest } from '../assembly/assembly.types';
 
@@ -81,7 +81,7 @@ export const BillingPage: React.FC = () => {
         password,
         idPedido: selectedOrder.pedido.idPedido,
         estadoInicial: currentState,
-        estadoFinal: PAGADO_STATE_ID,
+        estadoFinal: TESORERIA_STATE_ID,
       };
 
       await createMovimiento(request);
@@ -90,7 +90,7 @@ export const BillingPage: React.FC = () => {
       setIsAuthPopupOpen(false);
       
       // Show success notification
-      showNotification(true, 'Pedido marcado como PAGADO exitosamente');
+      showNotification(true, 'Pedido marcado como TESORERÍA exitosamente');
       
       // Refresh orders list
       await fetchOrders();
@@ -101,7 +101,7 @@ export const BillingPage: React.FC = () => {
       setIsAuthPopupOpen(false);
       
       // Show error notification
-      const errorMessage = err.response?.data?.message || 'Error al marcar el pedido como PAGADO';
+      const errorMessage = err.response?.data?.message || 'Error al marcar el pedido como TESORERÍA';
       showNotification(false, errorMessage);
     }
   };
@@ -124,7 +124,7 @@ export const BillingPage: React.FC = () => {
             Facturación
           </h1>
           <p style={{ color: 'var(--text-secondary)' }}>
-            Marca los pedidos como PAGADO
+            Marca los pedidos como TESORERÍA
           </p>
         </div>
 

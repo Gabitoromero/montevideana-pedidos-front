@@ -11,7 +11,7 @@ const ESTADO_COLORS = {
   PENDIENTE: '#6b7280', // Gris
   'EN PREPARACION': '#3b82f6', // Azul
   PREPARADO: '#8b5cf6', // Púrpura
-  PAGADO: '#10b981', // Verde
+  'TESORERÍA': '#10b981', // Verde
   ENTREGADO: '#f59e0b', // Naranja
 };
 
