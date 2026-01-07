@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Filter, Truck } from 'lucide-react';
+import { ArrowLeft, Filter, Truck, Search } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FleterosTable } from '../../shared/components/FleterosTable';
@@ -12,6 +12,7 @@ export const FleterosListPage: React.FC = () => {
   const navigate = useNavigate();
   const [fleteros, setFleteros] = useState<Fletero[]>([]);
   const [filter, setFilter] = useState<FilterType>('activos');
+  const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedFletero, setSelectedFletero] = useState<Fletero | null>(null);
@@ -73,6 +74,17 @@ export const FleterosListPage: React.FC = () => {
 
   const isFilterActive = filter === 'inactivos';
 
+  // Filter fleteros by search text (case-insensitive partial match)
+  const filteredFleteros = useMemo(() => {
+    if (!searchText.trim()) {
+      return fleteros;
+    }
+    const searchLower = searchText.toLowerCase();
+    return fleteros.filter(fletero => 
+      fletero.dsFletero.toLowerCase().includes(searchLower)
+    );
+  }, [fleteros, searchText]);
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
       <Sidebar />
@@ -99,28 +111,54 @@ export const FleterosListPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Filter Section */}
-        <div className="mb-6 flex items-center gap-4">
-          <Filter size={20} className="text-[var(--text-secondary)]" />
-          <label htmlFor="filter" className="text-[var(--text-primary)] font-medium">
-            Filtrar por estado:
-          </label>
-          <select
-            id="filter"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as FilterType)}
-            className={`px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 ${
-              isFilterActive
-                ? 'border-[var(--accent)] bg-[var(--accent)]/10'
-                : 'border-[var(--border)]'
-            } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200`}
-          >
-            <option value="activos">Activos (Siguiendo)</option>
-            <option value="inactivos">Inactivos (No siguiendo)</option>
-          </select>
-          {isFilterActive && (
+        {/* Filter and Search Section */}
+        <div className="mb-6 flex items-center gap-4 flex-wrap">
+          {/* Status Filter */}
+          <div className="flex items-center gap-4">
+            <Filter size={20} className="text-[var(--text-secondary)]" />
+            <label htmlFor="filter" className="text-[var(--text-primary)] font-medium">
+              Filtrar por estado:
+            </label>
+            <select
+              id="filter"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as FilterType)}
+              className={`px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 ${
+                isFilterActive
+                  ? 'border-[var(--accent)] bg-[var(--accent)]/10'
+                  : 'border-[var(--border)]'
+              } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200`}
+            >
+              <option value="activos">Activos (Siguiendo)</option>
+              <option value="inactivos">Inactivos (No siguiendo)</option>
+            </select>
+          </div>
+
+          {/* Search Input */}
+          <div className="flex items-center gap-2 flex-1 min-w-[300px]">
+            <Search size={20} className="text-[var(--text-secondary)]" />
+            <input
+              type="text"
+              placeholder="Buscar por descripción..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="flex-1 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200"
+            />
+            {searchText && (
+              <button
+                onClick={() => setSearchText('')}
+                className="px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--error)] transition-colors"
+                title="Limpiar búsqueda"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Results Counter */}
+          {(isFilterActive || searchText) && (
             <span className="text-sm text-[var(--accent)] font-semibold">
-              Mostrando {fleteros.length} fleteros inactivos
+              Mostrando {filteredFleteros.length} de {fleteros.length} fleteros
             </span>
           )}
         </div>
@@ -140,7 +178,7 @@ export const FleterosListPage: React.FC = () => {
               <p className="text-[var(--text-secondary)]">Cargando fleteros...</p>
             </div>
           ) : (
-            <FleterosTable fleteros={fleteros} onFleterosClick={handleFleterosClick} />
+            <FleterosTable fleteros={filteredFleteros} onFleterosClick={handleFleterosClick} />
           )}
         </Card>
       </div>
