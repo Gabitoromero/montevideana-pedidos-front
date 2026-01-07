@@ -4,7 +4,7 @@ import type { ApiResponse, PedidoConMovimiento } from '../orders/order.types';
 
 /**
  * Creates a new movimiento (state transition) for an order
- * @param request - Contains username, password, idPedido, estadoInicial, estadoFinal
+ * @param request - Contains pin, idPedido, estadoInicial, estadoFinal
  * @returns Promise with the API response
  */
 export async function createMovimiento(

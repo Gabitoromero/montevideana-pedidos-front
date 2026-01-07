@@ -67,7 +67,7 @@ export const AssemblyPage: React.FC = () => {
   };
 
   // Handle authentication submission
-  const handleAuthSubmit = async (username: string, password: string) => {
+  const handleAuthSubmit = async (pin: string) => {
     if (!selectedOrder) return;
 
     const currentState = selectedOrder.ultimoMovimiento.estadoFinal.id;
@@ -81,8 +81,7 @@ export const AssemblyPage: React.FC = () => {
 
     try {
       const request: CreateMovimientoRequest = {
-        username,
-        password,
+        pin,
         idPedido: selectedOrder.pedido.idPedido,
         estadoInicial: currentState,
         estadoFinal: nextState,
@@ -105,7 +104,7 @@ export const AssemblyPage: React.FC = () => {
       setIsAuthPopupOpen(false);
       
       // Show error notification
-      const errorMessage = err.response?.data?.message || 'Error al crear el movimiento';
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al crear el movimiento';
       showNotification(false, errorMessage);
     }
   };

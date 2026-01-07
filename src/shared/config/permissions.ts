@@ -1,4 +1,4 @@
-export type Sector = 'admin' | 'armado' | 'facturacion' | 'CHESS';
+export type Sector = 'ADMIN' | 'CAMARA' | 'CHESS' | 'EXPEDICION';
 
 export interface RoutePermission {
   path: string;
@@ -9,67 +9,67 @@ export interface RoutePermission {
 export const ROUTE_PERMISSIONS: RoutePermission[] = [
   {
     path: '/',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Inicio'
   },
   {
     path: '/orders',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Pedidos'
   },
   {
     path: '/assembly',
-    allowedSectors: ['admin', 'CHESS', 'armado'],
+    allowedSectors: ['ADMIN', 'CHESS', 'CAMARA', 'EXPEDICION'],
     label: 'Armado de Pedidos'
   },
   {
     path: '/billing',
-    allowedSectors: ['admin', 'CHESS', 'facturacion'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Facturación'
   },
   {
     path: '/users',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Gestión de Usuarios'
   },
   {
     path: '/users/list',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Lista de Usuarios'
   },
   {
     path: '/users/create',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Crear Usuario'
   },
   {
     path: '/users/edit/:id',
-    allowedSectors: ['admin', 'CHESS'], // Todos pueden editar su propio perfil
+    allowedSectors: ['ADMIN', 'CHESS'], // Todos pueden editar su propio perfil
     label: 'Editar Usuario'
   },
   {
     path: '/fleteros',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Gestión de Fleteros'
   },
   {
     path: '/movimientos',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Consulta de Movimientos'
   },
   {
     path: '/movimientos/usuario',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Movimientos por Usuario'
   },
   {
     path: '/movimientos/estado',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Movimientos por Estado'
   },
   {
     path: '/movimientos/historial',
-    allowedSectors: ['admin', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Historial de Pedido'
   },
 ];

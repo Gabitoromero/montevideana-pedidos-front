@@ -2,8 +2,7 @@ import { ESTADO_IDS } from '../orders/order.types';
 
 // Request to create a movimiento
 export interface CreateMovimientoRequest {
-  username: string;
-  password: string;
+  pin: string;
   idPedido: string;
   estadoInicial: number;
   estadoFinal: number;

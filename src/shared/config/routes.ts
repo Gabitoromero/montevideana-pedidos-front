@@ -7,11 +7,10 @@ import type { Sector } from './permissions';
  */
 export function getDefaultRouteForSector(sector: Sector | string): string {
   switch (sector) {
-    case 'facturacion':
-      return '/billing';
-    case 'armado':
+    case 'CAMARA':
+    case 'EXPEDICION':
       return '/assembly';
-    case 'admin':
+    case 'ADMIN':
     case 'CHESS':
     default:
       return '/';

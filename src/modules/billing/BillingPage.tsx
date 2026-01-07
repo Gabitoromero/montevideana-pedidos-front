@@ -70,15 +70,14 @@ export const BillingPage: React.FC = () => {
   };
 
   // Handle authentication submission
-  const handleAuthSubmit = async (username: string, password: string) => {
+  const handleAuthSubmit = async (pin: string) => {
     if (!selectedOrder) return;
 
     const currentState = selectedOrder.ultimoMovimiento.estadoFinal.id;
 
     try {
       const request: CreateMovimientoRequest = {
-        username,
-        password,
+        pin,
         idPedido: selectedOrder.pedido.idPedido,
         estadoInicial: currentState,
         estadoFinal: TESORERIA_STATE_ID,
@@ -101,7 +100,7 @@ export const BillingPage: React.FC = () => {
       setIsAuthPopupOpen(false);
       
       // Show error notification
-      const errorMessage = err.response?.data?.message || 'Error al marcar el pedido como TESORERÍA';
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al marcar el pedido como TESORERÍA';
       showNotification(false, errorMessage);
     }
   };

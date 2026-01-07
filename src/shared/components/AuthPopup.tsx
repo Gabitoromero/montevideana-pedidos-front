@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 interface AuthPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (username: string, password: string) => Promise<void>;
+  onSubmit: (pin: string) => Promise<void>;
   orderIdPedido: string;
 }
 
@@ -14,8 +14,7 @@ export const AuthPopup: React.FC<AuthPopupProps> = ({
   onSubmit,
   orderIdPedido 
 }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -25,10 +24,9 @@ export const AuthPopup: React.FC<AuthPopupProps> = ({
     setIsLoading(true);
     
     try {
-      await onSubmit(username, password);
+      await onSubmit(pin);
       // Reset form
-      setUsername('');
-      setPassword('');
+      setPin('');
     } finally {
       setIsLoading(false);
     }
@@ -36,8 +34,7 @@ export const AuthPopup: React.FC<AuthPopupProps> = ({
 
   const handleClose = () => {
     if (!isLoading) {
-      setUsername('');
-      setPassword('');
+      setPin('');
       onClose();
     }
   };
@@ -80,47 +77,27 @@ export const AuthPopup: React.FC<AuthPopupProps> = ({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username */}
+          {/* PIN */}
           <div>
             <label 
-              htmlFor="username"
+              htmlFor="pin"
               className="block text-sm font-medium mb-1"
               style={{ color: 'var(--text-secondary)' }}
             >
-              Usuario
+              PIN
             </label>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="pin"
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
               disabled={isLoading}
               required
-              className="w-full px-3 py-2 rounded border focus:outline-none focus:ring-2"
-              style={{
-                backgroundColor: 'var(--bg-primary)',
-                borderColor: 'var(--border)',
-                color: 'var(--text-primary)',
-              }}
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label 
-              htmlFor="password"
-              className="block text-sm font-medium mb-1"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              Contraseña
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-              required
+              minLength={4}
+              maxLength={10}
+              placeholder="Ingrese su PIN (4-10 dígitos)"
               className="w-full px-3 py-2 rounded border focus:outline-none focus:ring-2"
               style={{
                 backgroundColor: 'var(--bg-primary)',
