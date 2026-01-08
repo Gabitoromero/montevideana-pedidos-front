@@ -28,9 +28,9 @@ export const ResultNotification: React.FC<ResultNotificationProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+    <div className="fixed inset-x-0 bottom-0 flex items-end justify-center z-50 pointer-events-none p-4 pb-8">
       <div 
-        className="rounded-lg p-6 shadow-2xl max-w-md w-full mx-4 pointer-events-auto"
+        className="rounded-lg p-6 shadow-2xl max-w-md w-full pointer-events-auto animate-slide-up"
         style={{
           backgroundColor: isSuccess ? 'rgba(34, 197, 94, 0.95)' : 'rgba(239, 68, 68, 0.95)',
         }}
