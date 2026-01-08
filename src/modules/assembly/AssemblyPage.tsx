@@ -3,13 +3,16 @@ import { Search, Filter } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { OrderCard } from '../../shared/components/OrderCard';
 import { AuthPopup } from '../../shared/components/AuthPopup';
+import { EvaluationPopup } from '../../shared/components/EvaluationPopup';
 import { ResultNotification } from '../../shared/components/ResultNotification';
 import { getOrdersByState } from '../orders/orders.service';
 
 import { createMovimiento } from './assembly.service';
 import { getNextState, ASSEMBLY_FILTER_STATES } from './assembly.types';
+import { evaluateOrder } from '../pedidos/pedido.service';
 import type { PedidoConMovimiento } from '../orders/order.types';
 import type { CreateMovimientoRequest } from './assembly.types';
+import { ESTADO_IDS } from '../orders/order.types';
 
 export const AssemblyPage: React.FC = () => {
   const [selectedState, setSelectedState] = useState<number>(ASSEMBLY_FILTER_STATES[0].id);
@@ -22,6 +25,7 @@ export const AssemblyPage: React.FC = () => {
   // Popup states
   const [selectedOrder, setSelectedOrder] = useState<PedidoConMovimiento | null>(null);
   const [isAuthPopupOpen, setIsAuthPopupOpen] = useState(false);
+  const [isEvaluationPopupOpen, setIsEvaluationPopupOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -92,11 +96,17 @@ export const AssemblyPage: React.FC = () => {
       // Close auth popup
       setIsAuthPopupOpen(false);
       
-      // Show success notification
-      showNotification(true, 'Movimiento creado exitosamente');
-      
-      // Refresh orders list
-      await fetchOrders();
+      // Check if this is a PREPARADO -> ENTREGADO transition
+      if (nextState === ESTADO_IDS.ENTREGADO) {
+        // Open evaluation popup instead of showing success immediately
+        setIsEvaluationPopupOpen(true);
+      } else {
+        // Show success notification for other transitions
+        showNotification(true, 'Movimiento creado exitosamente');
+        
+        // Refresh orders list
+        await fetchOrders();
+      }
     } catch (err: any) {
       console.error('Error creating movimiento:', err);
       
@@ -105,6 +115,33 @@ export const AssemblyPage: React.FC = () => {
       
       // Show error notification
       const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al crear el movimiento';
+      showNotification(false, errorMessage);
+    }
+  };
+
+  // Handle evaluation submission
+  const handleEvaluationSubmit = async (rating: number) => {
+    if (!selectedOrder) return;
+
+    try {
+      await evaluateOrder(selectedOrder.pedido.idPedido, rating);
+      
+      // Close evaluation popup
+      setIsEvaluationPopupOpen(false);
+      
+      // Show success notification
+      showNotification(true, 'Pedido evaluado y movimiento creado exitosamente');
+      
+      // Refresh orders list
+      await fetchOrders();
+    } catch (err: any) {
+      console.error('Error evaluating order:', err);
+      
+      // Close evaluation popup
+      setIsEvaluationPopupOpen(false);
+      
+      // Show error notification
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al evaluar el pedido';
       showNotification(false, errorMessage);
     }
   };
@@ -124,7 +161,7 @@ export const AssemblyPage: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-            Armado
+            Cámara
           </h1>
           <p style={{ color: 'var(--text-secondary)' }}>
             Gestiona los movimientos de estado de los pedidos
@@ -243,6 +280,13 @@ export const AssemblyPage: React.FC = () => {
         isOpen={isAuthPopupOpen}
         onClose={() => setIsAuthPopupOpen(false)}
         onSubmit={handleAuthSubmit}
+        orderIdPedido={selectedOrder?.pedido.idPedido || ''}
+      />
+
+      {/* Evaluation Popup */}
+      <EvaluationPopup
+        isOpen={isEvaluationPopupOpen}
+        onSubmit={handleEvaluationSubmit}
         orderIdPedido={selectedOrder?.pedido.idPedido || ''}
       />
 

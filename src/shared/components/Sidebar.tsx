@@ -16,7 +16,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
   const user = useAuthStore((state) => state.user);
   const { theme, toggleTheme } = useThemeStore();
 
-  const isAdminOrChess = user?.sector === 'admin' || user?.sector === 'CHESS';
+  const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
 
   // Use external control if provided, otherwise use internal state
   const isOpen = externalIsOpen ?? internalIsOpen;

@@ -17,6 +17,9 @@ export type { InputProps } from './Input';
 // LogoutButton
 export { LogoutButton } from './LogoutButton';
 
+// EvaluationPopup
+export { EvaluationPopup } from './EvaluationPopup';
+
 // Pages
 export { AccessDeniedPage } from './AccessDeniedPage';
 export { NotFoundPage } from './NotFoundPage';

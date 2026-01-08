@@ -3,9 +3,11 @@ import { Search, Filter } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { OrderCard } from '../../shared/components/OrderCard';
 import { AuthPopup } from '../../shared/components/AuthPopup';
+import { EvaluationPopup } from '../../shared/components/EvaluationPopup';
 import { ResultNotification } from '../../shared/components/ResultNotification';
 import { getOrdersByState } from '../orders/orders.service';
 import { createMovimiento } from '../assembly/assembly.service';
+import { evaluateOrder } from '../pedidos/pedido.service';
 import { BILLING_FILTER_STATES, TESORERIA_STATE_ID } from './billing.types';
 import type { PedidoConMovimiento } from '../orders/order.types';
 import type { CreateMovimientoRequest } from '../assembly/assembly.types';
@@ -21,6 +23,7 @@ export const BillingPage: React.FC = () => {
   // Popup states
   const [selectedOrder, setSelectedOrder] = useState<PedidoConMovimiento | null>(null);
   const [isAuthPopupOpen, setIsAuthPopupOpen] = useState(false);
+  const [isEvaluationPopupOpen, setIsEvaluationPopupOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
@@ -88,6 +91,8 @@ export const BillingPage: React.FC = () => {
       // Close auth popup
       setIsAuthPopupOpen(false);
       
+      // BillingPage only transitions to TESORERÍA (ID: 5), not ENTREGADO (ID: 6)
+      // So we don't need to check for evaluation popup here
       // Show success notification
       showNotification(true, 'Pedido marcado como TESORERÍA exitosamente');
       
@@ -101,6 +106,33 @@ export const BillingPage: React.FC = () => {
       
       // Show error notification
       const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al marcar el pedido como TESORERÍA';
+      showNotification(false, errorMessage);
+    }
+  };
+
+  // Handle evaluation submission
+  const handleEvaluationSubmit = async (rating: number) => {
+    if (!selectedOrder) return;
+
+    try {
+      await evaluateOrder(selectedOrder.pedido.idPedido, rating);
+      
+      // Close evaluation popup
+      setIsEvaluationPopupOpen(false);
+      
+      // Show success notification
+      showNotification(true, 'Pedido evaluado y movimiento creado exitosamente');
+      
+      // Refresh orders list
+      await fetchOrders();
+    } catch (err: any) {
+      console.error('Error evaluating order:', err);
+      
+      // Close evaluation popup
+      setIsEvaluationPopupOpen(false);
+      
+      // Show error notification
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al evaluar el pedido';
       showNotification(false, errorMessage);
     }
   };
@@ -239,6 +271,13 @@ export const BillingPage: React.FC = () => {
         isOpen={isAuthPopupOpen}
         onClose={() => setIsAuthPopupOpen(false)}
         onSubmit={handleAuthSubmit}
+        orderIdPedido={selectedOrder?.pedido.idPedido || ''}
+      />
+
+      {/* Evaluation Popup */}
+      <EvaluationPopup
+        isOpen={isEvaluationPopupOpen}
+        onSubmit={handleEvaluationSubmit}
         orderIdPedido={selectedOrder?.pedido.idPedido || ''}
       />
 

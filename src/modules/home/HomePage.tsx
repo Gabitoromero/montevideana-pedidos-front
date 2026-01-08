@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ListOrdered, Package, DollarSign, Menu } from 'lucide-react';
@@ -44,7 +45,7 @@ export const HomePage: React.FC = () => {
 
   // Redirigir automáticamente a usuarios no-admin/CHESS a su página específica
   useEffect(() => {
-    if (user && user.sector !== 'admin' && user.sector !== 'CHESS') {
+    if (user && user.sector !== 'ADMIN' && user.sector !== 'CHESS') {
       const redirectPath = getDefaultRouteForSector(user.sector);
       navigate(redirectPath, { replace: true });
     }
@@ -80,7 +81,7 @@ export const HomePage: React.FC = () => {
     accessibleRoutes.some(route => route.path === card.path)
   );
 
-  const isAdminOrChess = user?.sector === 'admin' || user?.sector === 'CHESS';
+  const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8 relative">
