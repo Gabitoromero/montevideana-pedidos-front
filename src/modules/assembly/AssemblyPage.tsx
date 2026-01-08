@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { OrderCard } from '../../shared/components/OrderCard';
@@ -29,7 +29,7 @@ export const AssemblyPage: React.FC = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
-  const [currentPin, setCurrentPin] = useState<string>(''); // Store PIN for evaluation
+  const currentPinRef = useRef<string>(''); // Store PIN for evaluation using ref
 
   // Fetch orders by selected state
   const fetchOrders = async () => {
@@ -100,7 +100,7 @@ export const AssemblyPage: React.FC = () => {
       // Check if this is a PREPARADO -> ENTREGADO transition
       if (nextState === ESTADO_IDS.ENTREGADO) {
         // Store PIN for evaluation and open evaluation popup
-        setCurrentPin(pin);
+        currentPinRef.current = pin;
         setIsEvaluationPopupOpen(true);
       } else {
         // Show success notification for other transitions
@@ -126,7 +126,7 @@ export const AssemblyPage: React.FC = () => {
     if (!selectedOrder) return;
 
     try {
-      await evaluateOrder(selectedOrder.pedido.idPedido, rating, currentPin);
+      await evaluateOrder(selectedOrder.pedido.idPedido, rating, currentPinRef.current);
       
       // Close evaluation popup
       setIsEvaluationPopupOpen(false);
