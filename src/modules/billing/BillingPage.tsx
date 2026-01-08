@@ -27,6 +27,7 @@ export const BillingPage: React.FC = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [currentPin, setCurrentPin] = useState<string>(''); // Store PIN for evaluation
 
   // Fetch orders by selected state
   const fetchOrders = async () => {
@@ -115,7 +116,7 @@ export const BillingPage: React.FC = () => {
     if (!selectedOrder) return;
 
     try {
-      await evaluateOrder(selectedOrder.pedido.idPedido, rating);
+      await evaluateOrder(selectedOrder.pedido.idPedido, rating, currentPin);
       
       // Close evaluation popup
       setIsEvaluationPopupOpen(false);

@@ -1,6 +1,7 @@
 // Request body for order evaluation
 export interface EvaluationRequest {
   calificacion: number; // 1-5
+  pin: string; // PIN del usuario que autoriza la evaluación
 }
 
 // Response from evaluation endpoint

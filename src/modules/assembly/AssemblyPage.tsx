@@ -29,6 +29,7 @@ export const AssemblyPage: React.FC = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
+  const [currentPin, setCurrentPin] = useState<string>(''); // Store PIN for evaluation
 
   // Fetch orders by selected state
   const fetchOrders = async () => {
@@ -98,7 +99,8 @@ export const AssemblyPage: React.FC = () => {
       
       // Check if this is a PREPARADO -> ENTREGADO transition
       if (nextState === ESTADO_IDS.ENTREGADO) {
-        // Open evaluation popup instead of showing success immediately
+        // Store PIN for evaluation and open evaluation popup
+        setCurrentPin(pin);
         setIsEvaluationPopupOpen(true);
       } else {
         // Show success notification for other transitions
@@ -124,7 +126,7 @@ export const AssemblyPage: React.FC = () => {
     if (!selectedOrder) return;
 
     try {
-      await evaluateOrder(selectedOrder.pedido.idPedido, rating);
+      await evaluateOrder(selectedOrder.pedido.idPedido, rating, currentPin);
       
       // Close evaluation popup
       setIsEvaluationPopupOpen(false);
