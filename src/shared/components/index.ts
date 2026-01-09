@@ -20,6 +20,9 @@ export { LogoutButton } from './LogoutButton';
 // EvaluationPopup
 export { EvaluationPopup } from './EvaluationPopup';
 
+// FleterosConfigModal
+export { FleterosConfigModal } from './FleterosConfigModal';
+
 // Pages
 export { AccessDeniedPage } from './AccessDeniedPage';
 export { NotFoundPage } from './NotFoundPage';

@@ -7,7 +7,8 @@ import { Sidebar } from '../../shared/components/Sidebar';
 import { useAuthStore } from '../../store/auth.store';
 import { getAccessibleRoutes } from '../../shared/config/permissions';
 import { getDefaultRouteForSector } from '../../shared/config/routes';
-import logotest from '../../assets/logotest.png';
+//import logotest from '../../assets/logotest.png';
+import nuevologo from '../../assets/nuevologo.png';
 
 interface MenuCardProps {
   title: string;
@@ -102,7 +103,7 @@ export const HomePage: React.FC = () => {
         {/* Header with Logo */}
         <div className="text-center mb-12 animate-fade-in">
           <img 
-            src={logotest} 
+            src={nuevologo} 
             alt="La Montevideana System" 
             className="w-64 h-64 object-contain mx-auto mb-6"
           />

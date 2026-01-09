@@ -2,35 +2,35 @@
 
 /* CSS Variables for Themes */
 :root {
-  /* Dark Theme (default) */
+  /* Dark Theme (default) - Ice Blue Palette */
   --bg-primary: #1a1a1a;
   --bg-secondary: #2d2d2d;
   --bg-lighter: #2a2a2a;
   --text-primary: #ffffff;
   --text-secondary: #d1d5db;
   --text-tertiary: #9ca3af;
-  --primary: #a38a70;
-  --primary-light: #b89a7f;
-  --primary-dark: #8b7355;
-  --accent: #d4af37;
-  --border: #d4af37;
+  --primary: #4a7c9e;
+  --primary-light: #6b9fbf;
+  --primary-dark: #2c5571;
+  --accent: #7fb8d9;
+  --border: #5a8caf;
   --error: #ef4444;
   --success: #10b981;
 }
 
 :root.light {
-  /* Light Theme */
+  /* Light Theme - Ice Blue Palette */
   --bg-primary: #f5f5f5;
   --bg-secondary: #e8e8e8;
   --bg-lighter: #d4d4d4;
   --text-primary: #1a1a1a;
   --text-secondary: #2d2d2d;
   --text-tertiary: #4a4a4a;
-  --primary: #8b7355;
-  --primary-light: #a38a70;
-  --primary-dark: #6d5a43;
-  --accent: #b8860b;
-  --border: #b8860b;
+  --primary: #2c5571;
+  --primary-light: #4a7c9e;
+  --primary-dark: #1a3a4d;
+  --accent: #5a9bc4;
+  --border: #4a7c9e;
   --error: #dc2626;
   --success: #059669;
 }

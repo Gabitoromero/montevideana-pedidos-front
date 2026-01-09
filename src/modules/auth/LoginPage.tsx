@@ -6,7 +6,7 @@ import { Input } from '../../shared/components/Input';
 import { Button } from '../../shared/components/Button';
 import { getDefaultRouteForSector } from '../../shared/config/routes';
 import { useAuthStore } from '../../store/auth.store';
-import logotest from '../../assets/logotest.png';
+import logotest from '../../assets/nuevologo.png';
 import { logger } from '../../utils/logger';
 
 

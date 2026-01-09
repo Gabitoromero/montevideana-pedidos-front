@@ -5,14 +5,15 @@ interface MovimientosTableProps {
   movimientos: Movimiento[];
 }
 
-// Colores para cada estado
+// Colores para cada estado - Paleta distintiva alineada con MONTHELADO
 const ESTADO_COLORS = {
-  CHESS: 'var(--accent)', // Dorado
-  PENDIENTE: '#6b7280', // Gris
-  'EN PREPARACION': '#3b82f6', // Azul
+  CHESS: '#7FB8D9', // Celeste brillante (accent del logo)
+  PENDIENTE: '#94a3b8', // Gris azulado claro
+  'EN PREPARACION': '#3b82f6', // Azul vibrante
   PREPARADO: '#8b5cf6', // Púrpura
-  'TESORERÍA': '#10b981', // Verde
-  ENTREGADO: '#f59e0b', // Naranja
+  'TESORERÍA': '#10b981', // Verde esmeralda
+  TESORERIA: '#10b981', // Verde esmeralda (sin acento para compatibilidad)
+  ENTREGADO: '#f59e0b', // Naranja ámbar
 };
 
 export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos }) => {

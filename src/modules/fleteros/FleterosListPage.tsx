@@ -4,6 +4,7 @@ import { ArrowLeft, Filter, Truck, Search } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FleterosTable } from '../../shared/components/FleterosTable';
+import { FleterosConfigModal } from '../../shared/components/FleterosConfigModal';
 import { fleterosService, type Fletero } from './fleteros.service';
 
 type FilterType = 'activos' | 'inactivos';
@@ -16,8 +17,10 @@ export const FleterosListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedFletero, setSelectedFletero] = useState<Fletero | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>('');
+  const [notificationSuccess, setNotificationSuccess] = useState<boolean>(false);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
 
   const loadFleteros = useCallback(async () => {
     try {
@@ -41,35 +44,47 @@ export const FleterosListPage: React.FC = () => {
 
   const handleFleterosClick = (fletero: Fletero) => {
     setSelectedFletero(fletero);
-    setShowModal(true);
+    setIsConfigModalOpen(true);
   };
 
-  const handleConfirmToggle = async () => {
+  const handleSaveConfig = async (seguimiento: boolean, liquidacionManual: boolean) => {
     if (!selectedFletero) return;
 
-    setIsUpdating(true);
     try {
-      await fleterosService.updateSeguimiento(
-        selectedFletero.idFletero,
-        !selectedFletero.seguimiento
-      );
+      // Update seguimiento if changed
+      if (seguimiento !== selectedFletero.seguimiento) {
+        await fleterosService.updateSeguimiento(selectedFletero.idFletero, seguimiento);
+      }
+
+      // Update liquidacionManual if changed
+      if (liquidacionManual !== selectedFletero.liquidacionManual) {
+        await fleterosService.updateLiquidacionManual(selectedFletero.idFletero, liquidacionManual);
+      }
+
+      setIsConfigModalOpen(false);
+      setSelectedFletero(null);
+      
+      // Show success notification
+      displayNotification(true, 'Configuración actualizada exitosamente');
       
       // Reload the list
       await loadFleteros();
-      
-      setShowModal(false);
-      setSelectedFletero(null);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { mensaje?: string; message?: string } } };
-      setError(error.response?.data?.mensaje || error.response?.data?.message || 'Error al actualizar seguimiento');
-    } finally {
-      setIsUpdating(false);
+      const errorMessage = error.response?.data?.mensaje || error.response?.data?.message || 'Error al actualizar la configuración';
+      displayNotification(false, errorMessage);
     }
   };
 
-  const handleCancelModal = () => {
-    setShowModal(false);
-    setSelectedFletero(null);
+  const displayNotification = (success: boolean, message: string) => {
+    setNotificationSuccess(success);
+    setNotificationMessage(message);
+    setShowNotification(true);
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
   };
 
   const isFilterActive = filter === 'inactivos';
@@ -103,11 +118,11 @@ export const FleterosListPage: React.FC = () => {
           <div className="flex items-center gap-3 mb-2">
             <Truck size={36} className="text-[var(--primary)]" />
             <h1 className="text-4xl font-bold text-[var(--text-primary)]">
-              Gestión de Fleteros
+              Gestión de Choferes
             </h1>
           </div>
           <p className="text-[var(--text-secondary)]">
-            Administra el seguimiento de fleteros
+            Administra el seguimiento de choferes
           </p>
         </div>
 
@@ -154,13 +169,6 @@ export const FleterosListPage: React.FC = () => {
               </button>
             )}
           </div>
-
-          {/* Results Counter */}
-          {(isFilterActive || searchText) && (
-            <span className="text-sm text-[var(--accent)] font-semibold">
-              Mostrando {filteredFleteros.length} de {fleteros.length} fleteros
-            </span>
-          )}
         </div>
 
         {/* Error Message */}
@@ -183,41 +191,29 @@ export const FleterosListPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* Confirmation Modal */}
-      {showModal && selectedFletero && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card padding="lg" className="max-w-md bg-[var(--bg-secondary)] border-2 border-[var(--primary)]">
-            <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
-              Cambiar Estado de Seguimiento
-            </h3>
-            <p className="text-[var(--text-secondary)] mb-6">
-              {selectedFletero.seguimiento ? (
-                <>
-                  ¿Deseas dejar de seguir a <strong className="text-[var(--text-primary)]">{selectedFletero.dsFletero}</strong>?
-                </>
-              ) : (
-                <>
-                  ¿Deseas volver a seguir a <strong className="text-[var(--text-primary)]">{selectedFletero.dsFletero}</strong>?
-                </>
-              )}
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={handleCancelModal}
-                disabled={isUpdating}
-                className="flex-1 py-3 px-6 bg-[var(--bg-lighter)] hover:bg-[var(--border)] text-[var(--text-primary)] font-bold rounded-lg transition-colors disabled:opacity-50"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleConfirmToggle}
-                disabled={isUpdating}
-                className="flex-1 py-3 px-6 bg-[var(--primary)] hover:bg-[var(--primary-light)] text-white font-bold rounded-lg transition-colors disabled:opacity-50"
-              >
-                {isUpdating ? 'Procesando...' : 'Confirmar'}
-              </button>
-            </div>
-          </Card>
+      {/* Configuration Modal */}
+      <FleterosConfigModal
+        isOpen={isConfigModalOpen}
+        fletero={selectedFletero}
+        onClose={() => {
+          setIsConfigModalOpen(false);
+          setSelectedFletero(null);
+        }}
+        onSave={handleSaveConfig}
+      />
+
+      {/* Notification Popup */}
+      {showNotification && (
+        <div className="fixed top-4 right-4 z-50 animate-slide-in">
+          <div
+            className={`px-6 py-4 rounded-lg shadow-lg border-2 ${
+              notificationSuccess
+                ? 'bg-green-500/10 border-green-500 text-green-600'
+                : 'bg-red-500/10 border-red-500 text-red-600'
+            }`}
+          >
+            <p className="font-semibold">{notificationMessage}</p>
+          </div>
         </div>
       )}
     </div>

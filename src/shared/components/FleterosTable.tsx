@@ -15,13 +15,14 @@ export const FleterosTable: React.FC<FleterosTableProps> = ({ fleteros, onFleter
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">ID</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Descripción</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Seguimiento</th>
+            <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Liquidación</th>
           </tr>
         </thead>
         <tbody>
           {fleteros.length === 0 ? (
             <tr>
-              <td colSpan={3} className="text-center py-8 text-[var(--text-secondary)]">
-                No se encontraron fleteros
+              <td colSpan={4} className="text-center py-8 text-[var(--text-secondary)]">
+                No se encontraron choferes
               </td>
             </tr>
           ) : (
@@ -45,6 +46,17 @@ export const FleterosTable: React.FC<FleterosTableProps> = ({ fleteros, onFleter
                   ) : (
                     <span className="px-3 py-1 rounded-full text-sm font-semibold bg-gray-500/20 text-gray-500 border border-gray-500/40">
                       No siguiendo
+                    </span>
+                  )}
+                </td>
+                <td className="py-4 px-6">
+                  {fletero.liquidacionManual ? (
+                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-yellow-500/20 text-yellow-600 border border-yellow-500/40">
+                      Manual
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-blue-500/20 text-blue-600 border border-blue-500/40">
+                      Automática
                     </span>
                   )}
                 </td>

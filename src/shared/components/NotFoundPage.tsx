@@ -2,7 +2,7 @@ import React from 'react';
 import { AlertCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
-import logotest from '../../assets/logotest.png';
+import logotest from '../../assets/nuevologo.png';
 
 export const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
