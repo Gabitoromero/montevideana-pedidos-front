@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ListFilter, FileText, ArrowLeft } from 'lucide-react';
+import { User, ListFilter, FileText, ArrowLeft, Download } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 
@@ -54,6 +54,12 @@ export const MovimientosIndexPage: React.FC = () => {
       description: 'Ver todos los movimientos de un pedido',
       icon: <FileText size={48} />,
       path: '/movimientos/historial',
+    },
+    {
+      title: 'Exportar Movimientos',
+      description: 'Descargar movimientos en formato CSV',
+      icon: <Download size={48} />,
+      path: '/movimientos/export',
     },
   ];
 

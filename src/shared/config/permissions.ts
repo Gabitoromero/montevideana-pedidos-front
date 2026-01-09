@@ -72,6 +72,11 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
     allowedSectors: ['ADMIN', 'CHESS'],
     label: 'Historial de Pedido'
   },
+  {
+    path: '/movimientos/export',
+    allowedSectors: ['ADMIN', 'CHESS'],
+    label: 'Exportar Movimientos'
+  },
 ];
 
 /**
