@@ -153,10 +153,10 @@ export const BillingPage: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-            Facturación
+            Tesorería
           </h1>
           <p style={{ color: 'var(--text-secondary)' }}>
-            Marca los pedidos como TESORERÍA
+            Marca los pedidos a estado TESORERÍA
           </p>
         </div>
 

@@ -16,6 +16,21 @@ export const ExportMovimientosPage: React.FC = () => {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
 
+  // Check if date range exceeds 6 months
+  const isRangeExceeding6Months = (): boolean => {
+    if (!fechaDesde || !fechaHasta) {
+      return false;
+    }
+
+    const desde = new Date(fechaDesde);
+    const hasta = new Date(fechaHasta);
+    
+    const sixMonthsLater = new Date(desde);
+    sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+    
+    return hasta > sixMonthsLater;
+  };
+
   // Validate date range
   const validateDates = (): string | null => {
     if (!fechaDesde) {
@@ -137,13 +152,15 @@ export const ExportMovimientosPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Info Box */}
-            <div className="p-4 bg-[var(--primary)]/10 border border-[var(--primary)]/30 rounded-lg">
-              <p className="text-sm text-[var(--text-secondary)]">
-                <strong className="text-[var(--text-primary)]">Nota:</strong> El rango máximo permitido es de 6 meses. 
-                No se pueden seleccionar fechas futuras.
-              </p>
-            </div>
+            {/* Info Box - Only shown when range exceeds 6 months */}
+            {isRangeExceeding6Months() && (
+              <div className="p-4 bg-[var(--primary)]/10 border border-[var(--primary)]/30 rounded-lg">
+                <p className="text-sm text-[var(--text-secondary)]">
+                  <strong className="text-[var(--text-primary)]">Nota:</strong> El rango máximo permitido es de 6 meses. 
+                  No se pueden seleccionar fechas futuras.
+                </p>
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (

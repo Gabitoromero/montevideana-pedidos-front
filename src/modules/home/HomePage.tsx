@@ -65,13 +65,13 @@ export const HomePage: React.FC = () => {
     },
     {
       path: '/assembly',
-      title: 'Armado de Pedidos',
+      title: 'Cámara',
       description: 'Preparación y armado de pedidos',
       icon: <Package size={48} />
     },
     {
       path: '/billing',
-      title: 'Facturación',
+      title: 'Tesorería',
       description: 'Gestión de facturas y pagos',
       icon: <DollarSign size={48} />
     },
