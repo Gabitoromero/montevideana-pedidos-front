@@ -92,10 +92,10 @@ export const BillingPage: React.FC = () => {
       // Close auth popup
       setIsAuthPopupOpen(false);
       
-      // BillingPage only transitions to TESORERÍA (ID: 5), not ENTREGADO (ID: 6)
+      // BillingPage only transitions to TESORERIA (ID: 5), not ENTREGADO (ID: 6)
       // So we don't need to check for evaluation popup here
       // Show success notification
-      showNotification(true, 'Pedido marcado como TESORERÍA exitosamente');
+      showNotification(true, 'Pedido marcado como TESORERIA exitosamente');
       
       // Refresh orders list
       await fetchOrders();
@@ -106,7 +106,7 @@ export const BillingPage: React.FC = () => {
       setIsAuthPopupOpen(false);
       
       // Show error notification
-      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al marcar el pedido como TESORERÍA';
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al marcar el pedido como TESORERIA';
       showNotification(false, errorMessage);
     }
   };
@@ -156,7 +156,7 @@ export const BillingPage: React.FC = () => {
             Tesorería
           </h1>
           <p style={{ color: 'var(--text-secondary)' }}>
-            Marca los pedidos a estado TESORERÍA
+            Marca los pedidos a estado TESORERIA
           </p>
         </div>
 

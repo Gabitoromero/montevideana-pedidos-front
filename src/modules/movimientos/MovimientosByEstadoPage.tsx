@@ -7,7 +7,7 @@ import { MovimientoCard } from './MovimientoCard';
 import { movimientoService } from './movimiento.service';
 import type { Movimiento, EstadoPedido } from './movimiento.types';
 
-const ESTADOS: EstadoPedido[] = ['PENDIENTE', 'EN PREPARACION', 'PREPARADO', 'TESORERÍA', 'ENTREGADO'];
+const ESTADOS: EstadoPedido[] = ['PENDIENTE', 'EN PREPARACION', 'PREPARADO', 'TESORERIA', 'ENTREGADO'];
 
 export const MovimientosByEstadoPage: React.FC = () => {
   const navigate = useNavigate();

@@ -11,8 +11,7 @@ const ESTADO_COLORS = {
   PENDIENTE: '#94a3b8', // Gris azulado claro
   'EN PREPARACION': '#3b82f6', // Azul vibrante
   PREPARADO: '#8b5cf6', // Púrpura
-  'TESORERÍA': '#10b981', // Verde esmeralda
-  TESORERIA: '#10b981', // Verde esmeralda (sin acento para compatibilidad)
+  TESORERIA: '#10b981', // Verde esmeralda
   ENTREGADO: '#f59e0b', // Naranja ámbar
 };
 
