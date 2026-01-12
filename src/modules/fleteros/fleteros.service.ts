@@ -4,7 +4,7 @@ export interface Fletero {
   idFletero: number;
   dsFletero: string;
   seguimiento: boolean;
-  liquidacionManual: boolean;
+  liquidacion: boolean;
 }
 
 export interface UpdateSeguimientoDTO {
@@ -54,12 +54,12 @@ class FleterosService {
   }
 
   /**
-   * Actualizar estado de liquidación manual de un fletero
+   * Actualizar estado de liquidación de un fletero
    */
-  async updateLiquidacionManual(id: number, liquidacionManual: boolean): Promise<Fletero> {
+  async updateLiquidacion(id: number, liquidacion: boolean): Promise<Fletero> {
     const response = await apiClient.patch<{success: boolean; data: Fletero}>(
-      `/fleteros/${id}/liquidacion-manual`,
-      { liquidacionManual }
+      `/fleteros/${id}/liquidacion`,
+      { liquidacion }
     );
     return response.data.data;
   }

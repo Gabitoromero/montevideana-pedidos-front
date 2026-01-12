@@ -47,7 +47,7 @@ export const FleterosListPage: React.FC = () => {
     setIsConfigModalOpen(true);
   };
 
-  const handleSaveConfig = async (seguimiento: boolean, liquidacionManual: boolean) => {
+  const handleSaveConfig = async (seguimiento: boolean, liquidacion: boolean) => {
     if (!selectedFletero) return;
 
     try {
@@ -56,9 +56,9 @@ export const FleterosListPage: React.FC = () => {
         await fleterosService.updateSeguimiento(selectedFletero.idFletero, seguimiento);
       }
 
-      // Update liquidacionManual if changed
-      if (liquidacionManual !== selectedFletero.liquidacionManual) {
-        await fleterosService.updateLiquidacionManual(selectedFletero.idFletero, liquidacionManual);
+      // Update liquidacion if changed
+      if (liquidacion !== selectedFletero.liquidacion) {
+        await fleterosService.updateLiquidacion(selectedFletero.idFletero, liquidacion);
       }
 
       setIsConfigModalOpen(false);
@@ -118,11 +118,11 @@ export const FleterosListPage: React.FC = () => {
           <div className="flex items-center gap-3 mb-2">
             <Truck size={36} className="text-[var(--primary)]" />
             <h1 className="text-4xl font-bold text-[var(--text-primary)]">
-              Gestión de Choferes
+              Gestión de Transportes
             </h1>
           </div>
           <p className="text-[var(--text-secondary)]">
-            Administra el seguimiento de choferes
+            Administra el seguimiento de transportes
           </p>
         </div>
 

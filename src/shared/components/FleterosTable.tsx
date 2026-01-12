@@ -50,13 +50,13 @@ export const FleterosTable: React.FC<FleterosTableProps> = ({ fleteros, onFleter
                   )}
                 </td>
                 <td className="py-4 px-6">
-                  {fletero.liquidacionManual ? (
-                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-yellow-500/20 text-yellow-600 border border-yellow-500/40">
-                      Manual
+                  {fletero.liquidacion ? (
+                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-green-500/20 text-green-600 border border-green-500/40">
+                      Sí
                     </span>
                   ) : (
-                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-blue-500/20 text-blue-600 border border-blue-500/40">
-                      Automática
+                    <span className="px-3 py-1 rounded-full text-sm font-semibold bg-gray-500/20 text-gray-500 border border-gray-500/40">
+                      No
                     </span>
                   )}
                 </td>

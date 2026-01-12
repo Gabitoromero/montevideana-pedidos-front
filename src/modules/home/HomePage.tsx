@@ -1,13 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ListOrdered, Package, DollarSign, Menu } from 'lucide-react';
+import { ListOrdered, Package,  Menu } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { useAuthStore } from '../../store/auth.store';
 import { getAccessibleRoutes } from '../../shared/config/permissions';
 import { getDefaultRouteForSector } from '../../shared/config/routes';
-//import logotest from '../../assets/logotest.png';
 import nuevologo from '../../assets/nuevologo.png';
 
 interface MenuCardProps {
@@ -68,13 +67,14 @@ export const HomePage: React.FC = () => {
       title: 'Cámara',
       description: 'Preparación y armado de pedidos',
       icon: <Package size={48} />
-    },
-    {
-      path: '/billing',
-      title: 'Tesorería',
-      description: 'Gestión de facturas y pagos',
-      icon: <DollarSign size={48} />
-    },
+    }
+    // ,
+    // {
+    //   path: '/billing',
+    //   title: 'Tesorería',
+    //   description: 'Gestión de facturas y pagos',
+    //   icon: <DollarSign size={48} />
+    // },
   ];
 
   // Filtrar solo las tarjetas a las que el usuario tiene acceso
@@ -120,7 +120,7 @@ export const HomePage: React.FC = () => {
 
         {/* Menu Cards - Solo las permitidas */}
         {visibleCards.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-slide-up">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-slide-up">
             {visibleCards.map(card => (
               <MenuCard
                 key={card.path}

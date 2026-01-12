@@ -97,7 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"
               >
                 <Truck size={20} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
-                <span className="text-[var(--text-primary)] font-medium">Gestión de Choferes</span>
+                <span className="text-[var(--text-primary)] font-medium">Gestión de Transportes</span>
               </button>
             )}
 

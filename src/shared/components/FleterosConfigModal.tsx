@@ -16,14 +16,14 @@ export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
   onSave,
 }) => {
   const [seguimiento, setSeguimiento] = useState(false);
-  const [liquidacionManual, setLiquidacionManual] = useState(false);
+  const [liquidacion, setLiquidacion] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Update local state when fletero changes
   useEffect(() => {
     if (fletero) {
       setSeguimiento(fletero.seguimiento);
-      setLiquidacionManual(fletero.liquidacionManual);
+      setLiquidacion(fletero.liquidacion);
     }
   }, [fletero]);
 
@@ -32,7 +32,7 @@ export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await onSave(seguimiento, liquidacionManual);
+      await onSave(seguimiento, liquidacion);
       onClose();
     } catch (error) {
       // Error handling is done in parent component
@@ -119,16 +119,16 @@ export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
               Liquidación
             </h3>
             <button
-              onClick={() => setLiquidacionManual(!liquidacionManual)}
+              onClick={() => setLiquidacion(!liquidacion)}
               disabled={isLoading}
               className={`relative inline-flex h-12 w-24 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 mb-4`}
               style={{
-                backgroundColor: liquidacionManual ? '#f59e0b' : '#3b82f6',
+                backgroundColor: liquidacion ? '#22c55e' : '#9ca3af',
               }}
             >
               <span
                 className={`inline-block h-10 w-10 transform rounded-full bg-white shadow-lg transition-transform duration-200 ${
-                  liquidacionManual ? 'translate-x-12' : 'translate-x-1'
+                  liquidacion ? 'translate-x-12' : 'translate-x-1'
                 }`}
               />
             </button>
@@ -136,7 +136,7 @@ export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
               className="text-lg font-semibold"
               style={{ color: 'var(--text-secondary)' }}
             >
-              {liquidacionManual ? 'Manual' : 'Automática'}
+              {liquidacion ? 'Sí' : 'No'}
             </span>
           </div>
         </div>
