@@ -10,7 +10,8 @@ const SECTOR_COLORS = {
   ADMIN: 'var(--accent)', // Dorado
   CAMARA: '#3b82f6', // Azul
   EXPEDICION: '#f59e0b', // Naranja
-  CHESS: '#8b5cf6' // Púrpura
+  CHESS: '#8b5cf6', // Púrpura
+  TELEVISOR: '#06b6d4' // Cyan
 };
 
 export const UserTable: React.FC<UserTableProps> = ({ users, onUserClick }) => {

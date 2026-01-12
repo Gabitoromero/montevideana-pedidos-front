@@ -10,6 +10,8 @@ export function getDefaultRouteForSector(sector: Sector | string): string {
     case 'CAMARA':
     case 'EXPEDICION':
       return '/assembly';
+    case 'TELEVISOR':
+      return '/orders';
     case 'ADMIN':
     case 'CHESS':
     default:

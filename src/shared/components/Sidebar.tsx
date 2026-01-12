@@ -18,6 +18,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
 
   const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
 
+  // Hide sidebar completely for TELEVISOR sector
+  if (user?.sector === 'TELEVISOR') {
+    return null;
+  }
+
   // Use external control if provided, otherwise use internal state
   const isOpen = externalIsOpen ?? internalIsOpen;
   const setIsOpen = externalSetIsOpen ?? setInternalIsOpen;

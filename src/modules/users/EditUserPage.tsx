@@ -10,7 +10,7 @@ interface FormData {
   username: string;
   nombre: string;
   apellido: string;
-  sector: 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS' | '';
+  sector: 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS' | 'TELEVISOR' | '';
   password: string;
   activo: boolean;
 }
@@ -166,7 +166,7 @@ export const EditUserPage: React.FC = () => {
         username: formData.username,
         nombre: formData.nombre,
         apellido: formData.apellido,
-        sector: formData.sector as 'ADMIN' | 'CAMARA' | 'EXPEDICION',
+        sector: formData.sector as 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'TELEVISOR',
         activo: formData.activo,
       };
 
@@ -445,6 +445,7 @@ export const EditUserPage: React.FC = () => {
                 <option value="ADMIN">Admin</option>
                 <option value="CAMARA">Cámara</option>
                 <option value="EXPEDICION">Expedición</option>
+                <option value="TELEVISOR">Televisor</option>
                 {formData.sector === 'CHESS' && <option value="CHESS">CHESS</option>}
               </select>
               {errors.sector && (

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Filter } from 'lucide-react';
+import { ArrowLeft, Filter, Search } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { UserTable } from '../../shared/components/UserTable';
 import { userService, type Usuario } from './user.service';
 
-type SectorFilter = 'Todos' | 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS';
+type SectorFilter = 'Todos' | 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS' | 'TELEVISOR';
 type StatusFilter = 'Todos' | 'Activos' | 'Inactivos';
+type SearchField = 'nombre' | 'apellido' | 'username';
 
 export const UserListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ export const UserListPage: React.FC = () => {
   const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
   const [sectorFilter, setSectorFilter] = useState<SectorFilter>('Todos');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('Activos');
+  const [searchField, setSearchField] = useState<SearchField>('nombre');
+  const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,8 +40,17 @@ export const UserListPage: React.FC = () => {
       filtered = filtered.filter(u => !u.activo);
     }
     
+    // Filter by search text
+    if (searchText.trim()) {
+      const searchLower = searchText.toLowerCase();
+      filtered = filtered.filter(u => {
+        const fieldValue = u[searchField]?.toString().toLowerCase() || '';
+        return fieldValue.includes(searchLower);
+      });
+    }
+    
     setFilteredUsers(filtered);
-  }, [sectorFilter, statusFilter, users]);
+  }, [sectorFilter, statusFilter, searchField, searchText, users]);
 
   const loadUsers = async () => {
     try {
@@ -128,6 +140,7 @@ export const UserListPage: React.FC = () => {
               <option value="CAMARA">Cámara</option>
               <option value="EXPEDICION">Expedición</option>
               <option value="CHESS">CHESS</option>
+              <option value="TELEVISOR">Televisor</option>
             </select>
           </div>
           
@@ -150,6 +163,44 @@ export const UserListPage: React.FC = () => {
               <option value="Activos">Activos</option>
               <option value="Inactivos">Inactivos</option>
             </select>
+          </div>
+          
+          {/* Search Field Selector */}
+          <div className="flex items-center gap-2">
+            <label htmlFor="search-field" className="text-[var(--text-primary)] font-medium">
+              Buscar por:
+            </label>
+            <select
+              id="search-field"
+              value={searchField}
+              onChange={(e) => setSearchField(e.target.value as SearchField)}
+              className="px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 border-[var(--border)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200"
+            >
+              <option value="nombre">Nombre</option>
+              <option value="apellido">Apellido</option>
+              <option value="username">Usuario</option>
+            </select>
+          </div>
+
+          {/* Search Input */}
+          <div className="flex items-center gap-2 flex-1 min-w-[250px]">
+            <Search size={20} className="text-[var(--text-secondary)]" />
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="flex-1 px-4 py-2 rounded-lg bg-[var(--bg-secondary)] border-2 border-[var(--border)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-all duration-200"
+            />
+            {searchText && (
+              <button
+                onClick={() => setSearchText('')}
+                className="px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--error)] transition-colors"
+                title="Limpiar búsqueda"
+              >
+                ✕
+              </button>
+            )}
           </div>
           
           {isFilterActive && (
