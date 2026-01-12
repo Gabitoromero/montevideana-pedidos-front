@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Search, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { Button } from '../../shared/components/Button';
 import { MovimientoCard } from './MovimientoCard';
@@ -9,10 +9,16 @@ import { userService } from '../users/user.service';
 import type { Movimiento } from './movimiento.types';
 import type { Usuario } from '../users/user.service';
 
+type SectorFilter = 'Todos' | 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS' | 'TELEVISOR';
+type SearchField = 'nombre' | 'apellido' | 'username';
+
 export const MovimientosByUsuarioPage: React.FC = () => {
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [selectedUsuarioId, setSelectedUsuarioId] = useState<number | null>(null);
+  const [sectorFilter, setSectorFilter] = useState<SectorFilter>('Todos');
+  const [searchField, setSearchField] = useState<SearchField>('nombre');
+  const [searchText, setSearchText] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,6 +42,27 @@ export const MovimientosByUsuarioPage: React.FC = () => {
     };
     loadUsuarios();
   }, []);
+
+  // Filter users based on sector, search field, and search text
+  const filteredUsuarios = useMemo(() => {
+    let filtered = usuarios;
+
+    // Filter by sector
+    if (sectorFilter !== 'Todos') {
+      filtered = filtered.filter(u => u.sector === sectorFilter);
+    }
+
+    // Filter by search text
+    if (searchText.trim()) {
+      const searchLower = searchText.toLowerCase();
+      filtered = filtered.filter(u => {
+        const fieldValue = u[searchField]?.toString().toLowerCase() || '';
+        return fieldValue.includes(searchLower);
+      });
+    }
+
+    return filtered;
+  }, [usuarios, sectorFilter, searchField, searchText]);
 
   const handleSearch = async () => {
     if (!selectedUsuarioId) {
@@ -106,11 +133,92 @@ export const MovimientosByUsuarioPage: React.FC = () => {
 
         {/* Formulario de búsqueda */}
         <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg p-6 mb-8">
+          {/* Filtros de Usuario */}
+          <div className="mb-6 pb-6 border-b border-[var(--border)]">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+              <Filter size={20} />
+              Filtrar Usuarios
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Sector Filter */}
+              <div>
+                <label htmlFor="sector-filter" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  Sector:
+                </label>
+                <select
+                  id="sector-filter"
+                  value={sectorFilter}
+                  onChange={(e) => setSectorFilter(e.target.value as SectorFilter)}
+                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
+                >
+                  <option value="Todos">Todos</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="CAMARA">Cámara</option>
+                  <option value="EXPEDICION">Expedición</option>
+                  <option value="CHESS">CHESS</option>
+                  <option value="TELEVISOR">Televisor</option>
+                </select>
+              </div>
+
+              {/* Search Field Selector */}
+              <div>
+                <label htmlFor="search-field" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  Buscar por:
+                </label>
+                <select
+                  id="search-field"
+                  value={searchField}
+                  onChange={(e) => setSearchField(e.target.value as SearchField)}
+                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
+                >
+                  <option value="nombre">Nombre</option>
+                  <option value="apellido">Apellido</option>
+                  <option value="username">Usuario</option>
+                </select>
+              </div>
+
+              {/* Search Input */}
+              <div>
+                <label htmlFor="search-text" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  Búsqueda:
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="search-text"
+                    type="text"
+                    placeholder="Buscar..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className="flex-1 px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)]"
+                  />
+                  {searchText && (
+                    <button
+                      onClick={() => setSearchText('')}
+                      className="px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--error)] transition-colors"
+                      title="Limpiar búsqueda"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Filtered count */}
+            {(sectorFilter !== 'Todos' || searchText.trim()) && (
+              <p className="mt-3 text-sm text-[var(--accent)] font-semibold">
+                Mostrando {filteredUsuarios.length} de {usuarios.length} usuarios
+              </p>
+            )}
+          </div>
+
+          {/* Selector de Usuario y Fechas */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Selector de Usuario */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                Usuario
+                Usuario <span className="text-[var(--error)]">*</span>
               </label>
               <select
                 value={selectedUsuarioId || ''}
@@ -118,7 +226,7 @@ export const MovimientosByUsuarioPage: React.FC = () => {
                 className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
               >
                 <option value="">Seleccionar usuario...</option>
-                {usuarios.map((usuario) => (
+                {filteredUsuarios.map((usuario) => (
                   <option key={usuario.id} value={usuario.id}>
                     {usuario.nombre} {usuario.apellido} ({usuario.sector})
                   </option>
