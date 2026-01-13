@@ -17,6 +17,7 @@ import { ESTADO_IDS } from '../orders/order.types';
 export const AssemblyPage: React.FC = () => {
   const [selectedState, setSelectedState] = useState<number>(ASSEMBLY_FILTER_STATES[0].id);
   const [searchQuery, setSearchQuery] = useState('');
+  const [fleteroSearchQuery, setFleteroSearchQuery] = useState('');
   const [orders, setOrders] = useState<PedidoConMovimiento[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<PedidoConMovimiento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,17 +54,26 @@ export const AssemblyPage: React.FC = () => {
     fetchOrders();
   }, [selectedState]);
 
-  // Filter orders by search query
+  // Filter orders by search query (ID and fletero)
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredOrders(orders);
-    } else {
-      const filtered = orders.filter(order =>
+    let filtered = orders;
+
+    // Filter by ID if search query is not empty
+    if (searchQuery.trim() !== '') {
+      filtered = filtered.filter(order =>
         order.pedido.idPedido.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredOrders(filtered);
     }
-  }, [searchQuery, orders]);
+
+    // Filter by fletero if fletero search query is not empty
+    if (fleteroSearchQuery.trim() !== '') {
+      filtered = filtered.filter(order =>
+        order.pedido.fletero.dsFletero.toLowerCase().includes(fleteroSearchQuery.toLowerCase())
+      );
+    }
+
+    setFilteredOrders(filtered);
+  }, [searchQuery, fleteroSearchQuery, orders]);
 
   // Handle order card click
   const handleOrderClick = (order: PedidoConMovimiento) => {
@@ -201,8 +211,8 @@ export const AssemblyPage: React.FC = () => {
             </select>
           </div>
 
-          {/* Search */}
-          <div className="flex-1">
+          {/* Search by ID */}
+          <div className="flex-1 relative">
             <label 
               htmlFor="search"
               className="block text-sm font-medium mb-2"
@@ -211,19 +221,66 @@ export const AssemblyPage: React.FC = () => {
               <Search size={16} className="inline mr-1" />
               Buscar por ID
             </label>
-            <input
-              id="search"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ingrese ID del pedido..."
-              className="w-full px-4 py-2 rounded border focus:outline-none focus:ring-2"
-              style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border)',
-                color: 'var(--text-primary)',
-              }}
-            />
+            <div className="relative">
+              <input
+                id="search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Ingrese ID del pedido..."
+                className="w-full px-4 py-2 rounded border focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--bg-secondary)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-primary)',
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  aria-label="Limpiar búsqueda"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Search by Fletero */}
+          <div className="flex-1 relative">
+            <label 
+              htmlFor="fletero-search"
+              className="block text-sm font-medium mb-2"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              <Search size={16} className="inline mr-1" />
+              Buscar por fletero
+            </label>
+            <div className="relative">
+              <input
+                id="fletero-search"
+                type="text"
+                value={fleteroSearchQuery}
+                onChange={(e) => setFleteroSearchQuery(e.target.value)}
+                placeholder="Buscar por fletero..."
+                className="w-full px-4 py-2 rounded border focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--bg-secondary)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-primary)',
+                }}
+              />
+              {fleteroSearchQuery && (
+                <button
+                  onClick={() => setFleteroSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  aria-label="Limpiar búsqueda de fletero"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
