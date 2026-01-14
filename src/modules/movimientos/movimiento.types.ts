@@ -7,6 +7,12 @@ export interface MovimientoUsuario {
   apellido: string;
 }
 
+// Fletero asociado al pedido del movimiento
+export interface MovimientoFletero {
+  idFletero: number;
+  dsFletero: string;
+}
+
 // Movimiento individual
 export interface Movimiento {
   fechaHora: string; // ISO 8601 format
@@ -14,6 +20,7 @@ export interface Movimiento {
   estadoInicial: EstadoPedido;
   estadoFinal: EstadoPedido;
   usuario: MovimientoUsuario;
+  fletero: MovimientoFletero;
 }
 
 // Objeto de paginación

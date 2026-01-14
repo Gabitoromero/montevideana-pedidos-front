@@ -41,6 +41,7 @@ export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos 
           <tr className="border-b-2 border-[var(--border)]">
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Fecha y Hora</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">ID Pedido</th>
+            <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Transporte</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Estado Inicial</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Estado Final</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Usuario</th>
@@ -49,7 +50,7 @@ export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos 
         <tbody>
           {!movimientos || movimientos.length === 0 ? (
             <tr>
-              <td colSpan={5} className="text-center py-8 text-[var(--text-secondary)]">
+              <td colSpan={6} className="text-center py-8 text-[var(--text-secondary)]">
                 No se encontraron movimientos
               </td>
             </tr>
@@ -69,6 +70,11 @@ export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos 
                   <span className="font-mono font-bold text-[var(--primary)]">
                     {movimiento.idPedido}
                   </span>
+                </td>
+
+                {/* Transporte */}
+                <td className="py-4 px-6 text-[var(--text-primary)]">
+                  {movimiento.fletero.dsFletero}
                 </td>
 
                 {/* Estado Inicial */}
