@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { OrderCard } from '../../shared/components/OrderCard';
 import { AuthPopup } from '../../shared/components/AuthPopup';
 import { EvaluationPopup } from '../../shared/components/EvaluationPopup';
@@ -147,6 +148,7 @@ export const BillingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <FullscreenButton />
       <Sidebar />
 
       <div className="max-w-7xl mx-auto">

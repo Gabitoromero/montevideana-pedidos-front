@@ -8,8 +8,9 @@ interface OrderCardProps {
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({ order, onClick }) => {
-  const { pedido } = order;
+  const { pedido, ultimoMovimiento } = order;
   const isPaid = pedido.cobrado;
+  const operatorName = `${ultimoMovimiento.usuario.nombre} ${ultimoMovimiento.usuario.apellido}`;
 
   return (
     <div
@@ -30,9 +31,14 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onClick }) => {
       </div>
 
       {/* Fletero */}
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2 mb-1">
         <User size={16} className="mt-0.5 flex-shrink-0" style={{ color: 'var(--text-secondary)' }} />
         <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{pedido.fletero?.dsFletero || 'Sin fletero'}</span>
+      </div>
+
+      {/* Operator */}
+      <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
+        Op: <span style={{ color: 'var(--text-secondary)' }}>{operatorName}</span>
       </div>
     </div>
   );

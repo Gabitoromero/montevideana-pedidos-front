@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, ListFilter, FileText, ArrowLeft, Download } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 
 interface MenuCardProps {
   title: string;
@@ -65,6 +66,7 @@ export const MovimientosIndexPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <FullscreenButton />
       <Sidebar />
 
       <div className="max-w-6xl mx-auto">
@@ -75,7 +77,7 @@ export const MovimientosIndexPage: React.FC = () => {
             className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors mb-4"
           >
             <ArrowLeft size={20} />
-            <span>Volver al inicio</span>
+            <span>Volver</span>
           </button>
 
           <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { OrderColumn } from './OrderColumn';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { getOrdersByState } from './orders.service';
 import type { PedidoConMovimiento } from './order.types';
 import { ESTADO_IDS } from './order.types';
@@ -9,6 +11,7 @@ import { ESTADO_IDS } from './order.types';
 const POLLING_INTERVAL = 5000; // 5 seconds
 
 export const OrdersPage: React.FC = () => {
+  const navigate = useNavigate();
   const [pendingOrders, setPendingOrders] = useState<PedidoConMovimiento[]>([]);
   const [preparingOrders, setPreparingOrders] = useState<PedidoConMovimiento[]>([]);
   const [preparedOrders, setPreparedOrders] = useState<PedidoConMovimiento[]>([]);
@@ -88,33 +91,58 @@ export const OrdersPage: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <FullscreenButton />
       <Sidebar />
+      
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="flex items-center gap-2 mb-6 px-4 py-2 rounded-lg transition-colors"
+        style={{
+          color: 'var(--text-secondary)',
+          backgroundColor: 'transparent',
+          border: '1px solid var(--border)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = 'var(--primary)';
+          e.currentTarget.style.borderColor = 'var(--primary)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = 'var(--text-secondary)';
+          e.currentTarget.style.borderColor = 'var(--border)';
+        }}
+      >
+        <ArrowLeft size={20} />
+        <span>Volver</span>
+      </button>
+
+      {/* Error Display */}
+      {error && (
+        <div 
+          className="mb-6 p-4 rounded-lg flex items-center gap-3"
+          style={{
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgb(239, 68, 68)',
+          }}
+        >
+          <AlertCircle size={20} style={{ color: 'rgb(239, 68, 68)' }} />
+          <p style={{ color: 'rgb(239, 68, 68)' }}>{error}</p>
+        </div>
+      )}
 
       {/* Loading State */}
       {isLoading && (
-        <div className="max-w-7xl mx-auto text-center py-20">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--accent)' }}></div>
-          <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>Cargando pedidos...</p>
+        <div className="flex justify-center items-center py-20">
+          <div 
+            className="w-16 h-16 border-4 border-t-transparent rounded-full animate-spin"
+            style={{ borderColor: 'var(--primary)' }}
+          />
         </div>
       )}
 
-      {/* Error State */}
-      {error && (
-        <div className="max-w-7xl mx-auto mb-6">
-          <div className="rounded-lg p-4 flex items-center gap-3" style={{ 
-            backgroundColor: 'var(--error)', 
-            opacity: 0.2,
-            border: '1px solid var(--error)'
-          }}>
-            <AlertCircle style={{ color: 'var(--error)' }} size={24} />
-            <span style={{ color: 'var(--error)' }}>{error}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Orders Grid */}
+      {/* Orders Grid - Added top margin to prevent overlap */}
       {!isLoading && (
-        <div className="max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ marginTop: '1rem' }}>
           <OrderColumn
             title="PENDIENTE"
             orders={pendingOrders}

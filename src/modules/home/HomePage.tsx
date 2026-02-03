@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ListOrdered, Package,  Menu } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { useAuthStore } from '../../store/auth.store';
 import { getAccessibleRoutes } from '../../shared/config/permissions';
 import { getDefaultRouteForSector } from '../../shared/config/routes';
@@ -96,6 +97,9 @@ export const HomePage: React.FC = () => {
           <Menu size={24} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
         </button>
       )}
+
+      {/* Fullscreen Button */}
+      <FullscreenButton />
 
       <Sidebar externalIsOpen={isSidebarOpen} externalSetIsOpen={setIsSidebarOpen} />
 

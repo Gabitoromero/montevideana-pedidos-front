@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Filter, Search } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { UserTable } from '../../shared/components/UserTable';
 import { userService, type Usuario } from './user.service';
 
@@ -95,6 +96,7 @@ export const UserListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <FullscreenButton />
       <Sidebar />
 
       <div className="max-w-7xl mx-auto">

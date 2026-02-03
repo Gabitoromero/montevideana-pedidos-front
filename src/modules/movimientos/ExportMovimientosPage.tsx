@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, AlertCircle } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { Button } from '../../shared/components/Button';
 import { Card } from '../../shared/components/Card';
 import { movimientoService } from './movimiento.service';
@@ -91,6 +92,7 @@ export const ExportMovimientosPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <FullscreenButton />
       <Sidebar />
 
       <div className="max-w-4xl mx-auto">

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, UserX, AlertCircle, CheckCircle, Loader2, MoreVertical, Trash2 } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { userService, type UpdateUsuarioDTO } from './user.service';
 import { useAuthStore } from '../../store/auth.store';
 
@@ -265,6 +266,7 @@ export const EditUserPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <FullscreenButton />
       <Sidebar />
       
       <div className="max-w-4xl mx-auto relative">

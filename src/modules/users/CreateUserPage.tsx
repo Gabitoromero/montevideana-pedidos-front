@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { userService, type CreateUsuarioDTO } from './user.service';
 
 interface FormData {
@@ -143,6 +144,7 @@ export const CreateUserPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <FullscreenButton />
       <Sidebar />
       
       <div className="max-w-4xl mx-auto">

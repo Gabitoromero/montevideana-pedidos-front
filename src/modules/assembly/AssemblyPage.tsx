@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Filter, ArrowLeft } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
+import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { OrderCard } from '../../shared/components/OrderCard';
 import { AuthPopup } from '../../shared/components/AuthPopup';
 import { EvaluationPopup } from '../../shared/components/EvaluationPopup';
@@ -15,6 +17,7 @@ import type { CreateMovimientoRequest } from './assembly.types';
 import { ESTADO_IDS } from '../orders/order.types';
 
 export const AssemblyPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedState, setSelectedState] = useState<number>(ASSEMBLY_FILTER_STATES[0].id);
   const [searchQuery, setSearchQuery] = useState('');
   const [fleteroSearchQuery, setFleteroSearchQuery] = useState('');
@@ -167,6 +170,19 @@ export const AssemblyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="fixed top-6 left-6 z-20 p-3 rounded-lg bg-[var(--bg-secondary)] border-2 border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/10 transition-all duration-200 group flex items-center gap-2"
+        aria-label="Volver"
+      >
+        <ArrowLeft size={24} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
+        <span className="text-[var(--text-primary)] group-hover:text-[var(--primary-light)]">Volver</span>
+      </button>
+
+      {/* Fullscreen Button */}
+      <FullscreenButton />
+
       <Sidebar />
 
       <div className="max-w-7xl mx-auto">

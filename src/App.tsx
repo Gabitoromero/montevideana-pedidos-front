@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { ErrorBoundary } from './shared/components/ErrorBoundary';
+import { FullscreenProvider } from './shared/contexts/FullscreenContext';
 import { LoginPage } from './modules/auth/LoginPage';
 import { HomePage } from './modules/home/HomePage';
 import { OrdersPage } from './modules/orders/OrdersPage';
@@ -57,8 +58,9 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <Routes>
+      <FullscreenProvider>
+        <BrowserRouter>
+          <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/access-denied" element={<AccessDeniedPage />} />
@@ -197,6 +199,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
+      </FullscreenProvider>
     </ErrorBoundary>
   );
 }
