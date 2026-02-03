@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Filter, ArrowLeft } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { OrderCard } from '../../shared/components/OrderCard';
@@ -14,6 +15,7 @@ import type { PedidoConMovimiento } from '../orders/order.types';
 import type { CreateMovimientoRequest } from '../assembly/assembly.types';
 
 export const BillingPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedState, setSelectedState] = useState<number>(BILLING_FILTER_STATES[0].id);
   const [searchQuery, setSearchQuery] = useState('');
   const [orders, setOrders] = useState<PedidoConMovimiento[]>([]);
@@ -151,9 +153,31 @@ export const BillingPage: React.FC = () => {
       <FullscreenButton />
       <Sidebar />
 
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="flex items-center gap-2 mb-6 px-4 py-2 rounded-lg transition-colors"
+        style={{
+          color: 'var(--text-secondary)',
+          backgroundColor: 'transparent',
+          border: '1px solid var(--border)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = 'var(--primary)';
+          e.currentTarget.style.borderColor = 'var(--primary)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = 'var(--text-secondary)';
+          e.currentTarget.style.borderColor = 'var(--border)';
+        }}
+      >
+        <ArrowLeft size={20} />
+        <span>Volver</span>
+      </button>
+
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
+        {/* Header - Centered */}
+        <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
             Tesorería
           </h1>
