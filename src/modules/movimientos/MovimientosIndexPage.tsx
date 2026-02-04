@@ -6,6 +6,7 @@ import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { canViewCancelledOrders } from '../../shared/config/permissions';
 import { useAuthStore } from '../../store/auth.store';
+import { useBackNavigation } from '../../shared/hooks/useBackNavigation';
 
 interface MenuCardProps {
   title: string;
@@ -40,6 +41,7 @@ export const MovimientosIndexPage: React.FC = () => {
   const navigate = useNavigate();
   const user = useAuthStore(state => state.user);
   const userSector = user?.sector;
+  const { getBackRoute } = useBackNavigation();
 
   const menuCards = [
     {
@@ -87,7 +89,7 @@ export const MovimientosIndexPage: React.FC = () => {
         {/* Header */}
         <div className="mb-12">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(getBackRoute())}
             className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--primary)] transition-colors mb-4"
           >
             <ArrowLeft size={20} />
