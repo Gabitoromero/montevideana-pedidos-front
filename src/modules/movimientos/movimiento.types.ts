@@ -21,6 +21,7 @@ export interface Movimiento {
   estadoFinal: EstadoPedido;
   usuario: MovimientoUsuario;
   fletero: MovimientoFletero;
+  motivoAnulacion: string;
 }
 
 // Objeto de paginación

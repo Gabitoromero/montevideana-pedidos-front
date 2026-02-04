@@ -17,6 +17,7 @@ export interface Movimiento {
   estadoInicial: Estado;
   estadoFinal: Estado;
   usuario: Usuario;
+  motivoAnulacion: string;
 }
 
 // Datos del pedido
