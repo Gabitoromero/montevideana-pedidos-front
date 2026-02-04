@@ -17,6 +17,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
   const { theme, toggleTheme } = useThemeStore();
 
   const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
+  const canAccessMovimientos = isAdminOrChess || user?.sector === 'EXPEDICION';
 
   // Hide sidebar completely for TELEVISOR sector
   if (user?.sector === 'TELEVISOR') {
@@ -106,8 +107,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
               </button>
             )}
 
-            {/* Movimientos - For Admin and CHESS */}
-            {isAdminOrChess && (
+            {/* Movimientos - For Admin, CHESS, and EXPEDICION */}
+            {canAccessMovimientos && (
               <button
                 onClick={() => handleNavigation('/movimientos')}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"

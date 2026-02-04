@@ -54,27 +54,27 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
   },
   {
     path: '/movimientos',
-    allowedSectors: ['ADMIN', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Consulta de Movimientos'
   },
   {
     path: '/movimientos/usuario',
-    allowedSectors: ['ADMIN', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Movimientos por Usuario'
   },
   {
     path: '/movimientos/estado',
-    allowedSectors: ['ADMIN', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Movimientos por Estado'
   },
   {
     path: '/movimientos/historial',
-    allowedSectors: ['ADMIN', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Historial de Pedido'
   },
   {
     path: '/movimientos/export',
-    allowedSectors: ['ADMIN', 'CHESS'],
+    allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Exportar Movimientos'
   },
 ];
