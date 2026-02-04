@@ -77,7 +77,32 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
     allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Exportar Movimientos'
   },
+  {
+    path: '/movimientos/anulados',
+    allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
+    label: 'Pedidos Anulados'
+  },
 ];
+
+/**
+ * Verifica si un usuario puede anular pedidos
+ * @param userSector - Sector del usuario
+ * @returns true si puede anular pedidos
+ */
+export function canCancelOrders(userSector: string | undefined): boolean {
+  if (!userSector) return false;
+  return ['ADMIN', 'CHESS'].includes(userSector);
+}
+
+/**
+ * Verifica si un usuario puede ver pedidos anulados
+ * @param userSector - Sector del usuario
+ * @returns true si puede ver pedidos anulados
+ */
+export function canViewCancelledOrders(userSector: string | undefined): boolean {
+  if (!userSector) return false;
+  return ['ADMIN', 'CHESS', 'EXPEDICION'].includes(userSector);
+}
 
 /**
  * Verifica si una ruta con parámetros coincide con un patrón

@@ -7,11 +7,15 @@ import { OrderCard } from '../../shared/components/OrderCard';
 import { AuthPopup } from '../../shared/components/AuthPopup';
 import { EvaluationPopup } from '../../shared/components/EvaluationPopup';
 import { ResultNotification } from '../../shared/components/ResultNotification';
+import { CancelOrderWarningModal } from '../../shared/components/CancelOrderWarningModal';
+import { CancelOrderAuthModal } from '../../shared/components/CancelOrderAuthModal';
 import { getOrdersByState } from '../orders/orders.service';
+import { useAuthStore } from '../../store/auth.store';
 
 import { createMovimiento } from './assembly.service';
 import { getNextState, ASSEMBLY_FILTER_STATES } from './assembly.types';
 import { evaluateOrder } from '../pedidos/pedido.service';
+import { cancelOrder } from '../orders/cancelOrder.service';
 import type { PedidoConMovimiento } from '../orders/order.types';
 import type { CreateMovimientoRequest } from './assembly.types';
 import { ESTADO_IDS } from '../orders/order.types';
@@ -35,6 +39,14 @@ export const AssemblyPage: React.FC = () => {
   const [notificationSuccess, setNotificationSuccess] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState('');
   const currentPinRef = useRef<string>(''); // Store PIN for evaluation using ref
+
+  // Cancel order states
+  const [isCancelWarningOpen, setIsCancelWarningOpen] = useState(false);
+  const [isCancelAuthOpen, setIsCancelAuthOpen] = useState(false);
+
+  // Get user sector from auth store
+  const user = useAuthStore(state => state.user);
+  const userSector = user?.sector;
 
   // Fetch orders by selected state
   const fetchOrders = async () => {
@@ -78,6 +90,8 @@ export const AssemblyPage: React.FC = () => {
 
     setFilteredOrders(filtered);
   }, [searchQuery, fleteroSearchQuery, orders]);
+
+
 
   // Handle order card click
   const handleOrderClick = (order: PedidoConMovimiento) => {
@@ -158,6 +172,41 @@ export const AssemblyPage: React.FC = () => {
       
       // Show error notification
       const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al evaluar el pedido';
+      showNotification(false, errorMessage);
+    }
+  };
+
+  // Handle cancel order submission
+  const handleCancelOrder = async (pin: string, motivo: string) => {
+    if (!selectedOrder) return;
+
+    try {
+      const currentState = selectedOrder.ultimoMovimiento.estadoFinal.id;
+
+      await cancelOrder({
+        pin,
+        idPedido: selectedOrder.pedido.idPedido,
+        estadoInicial: currentState,
+        estadoFinal: 7, // ANULADO
+        motivoAnulacion: motivo,
+      });
+
+      // Close modal
+      setIsCancelAuthOpen(false);
+
+      // Show success notification
+      showNotification(true, `Pedido ${selectedOrder.pedido.idPedido} anulado exitosamente`);
+
+      // Refresh orders to remove cancelled order from view
+      await fetchOrders();
+    } catch (err: any) {
+      console.error('Error cancelling order:', err);
+
+      // Close modal
+      setIsCancelAuthOpen(false);
+
+      // Show error notification
+      const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Error al anular el pedido';
       showNotification(false, errorMessage);
     }
   };
@@ -355,6 +404,30 @@ export const AssemblyPage: React.FC = () => {
         isOpen={isAuthPopupOpen}
         onClose={() => setIsAuthPopupOpen(false)}
         onSubmit={handleAuthSubmit}
+        orderIdPedido={selectedOrder?.pedido.idPedido || ''}
+        onCancelOrder={() => {
+          setIsAuthPopupOpen(false);
+          setIsCancelWarningOpen(true);
+        }}
+        userSector={userSector}
+      />
+
+      {/* Cancel Order Warning Modal */}
+      <CancelOrderWarningModal
+        isOpen={isCancelWarningOpen}
+        onClose={() => setIsCancelWarningOpen(false)}
+        onConfirm={() => {
+          setIsCancelWarningOpen(false);
+          setIsCancelAuthOpen(true);
+        }}
+        orderIdPedido={selectedOrder?.pedido.idPedido || ''}
+      />
+
+      {/* Cancel Order Auth Modal */}
+      <CancelOrderAuthModal
+        isOpen={isCancelAuthOpen}
+        onClose={() => setIsCancelAuthOpen(false)}
+        onSubmit={handleCancelOrder}
         orderIdPedido={selectedOrder?.pedido.idPedido || ''}
       />
 

@@ -6,16 +6,23 @@ interface AuthPopupProps {
   onClose: () => void;
   onSubmit: (pin: string) => Promise<void>;
   orderIdPedido: string;
+  onCancelOrder?: () => void; // Callback para abrir modal de anulación
+  userSector?: string; // Sector del usuario para verificar permisos
 }
 
 export const AuthPopup: React.FC<AuthPopupProps> = ({ 
   isOpen, 
   onClose, 
   onSubmit,
-  orderIdPedido 
+  orderIdPedido,
+  onCancelOrder,
+  userSector,
 }) => {
   const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Verificar si el usuario puede anular pedidos
+  const canCancel = userSector && ['ADMIN', 'CHESS'].includes(userSector);
 
   if (!isOpen) return null;
 
@@ -106,6 +113,43 @@ export const AuthPopup: React.FC<AuthPopupProps> = ({
               }}
             />
           </div>
+
+          {/* Cancel Order Section - Collapsible for safety */}
+          {canCancel && onCancelOrder && (
+            <div className="pt-3 pb-2 border-t border-[var(--border)]">
+              <details className="group">
+                <summary className="cursor-pointer list-none flex items-center justify-between p-2 rounded hover:bg-red-500/5 transition-colors">
+                  <span className="text-sm text-[var(--text-tertiary)] group-open:text-red-500 transition-colors">
+                    Opciones avanzadas
+                  </span>
+                  <svg 
+                    className="w-4 h-4 text-[var(--text-tertiary)] group-open:text-red-500 group-open:rotate-180 transition-transform" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <div className="mt-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPin('');
+                      onCancelOrder();
+                    }}
+                    disabled={isLoading}
+                    className="w-full px-4 py-2 rounded border-2 border-red-500 text-red-500 font-semibold transition-all duration-200 hover:bg-red-500 hover:text-white disabled:opacity-50"
+                  >
+                    🚫 Anular Pedido
+                  </button>
+                  <p className="text-xs text-[var(--text-tertiary)] mt-1 text-center">
+                    Esta acción es irreversible
+                  </p>
+                </div>
+              </details>
+            </div>
+          )}
 
           {/* Buttons */}
           <div className="flex gap-3 pt-2">

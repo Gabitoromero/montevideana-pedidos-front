@@ -13,6 +13,7 @@ const ESTADO_COLORS = {
   PREPARADO: '#8b5cf6', // Púrpura
   TESORERIA: '#10b981', // Verde esmeralda
   ENTREGADO: '#f59e0b', // Naranja ámbar
+  ANULADO: '#ef4444', // Rojo (estado terminal)
 };
 
 export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos }) => {

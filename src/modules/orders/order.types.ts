@@ -49,6 +49,7 @@ export const ESTADO_IDS = {
   PREPARADO: 4,
   TESORERIA: 5,
   ENTREGADO: 6,
+  ANULADO: 7,
 } as const;
 
 // Nombres de estados para UI
@@ -59,4 +60,5 @@ export const ESTADO_NOMBRES = {
   [ESTADO_IDS.PREPARADO]: 'PREPARADO',
   [ESTADO_IDS.TESORERIA]: 'TESORERIA',
   [ESTADO_IDS.ENTREGADO]: 'ENTREGADO',
+  [ESTADO_IDS.ANULADO]: 'ANULADO',
 } as const;

@@ -18,6 +18,7 @@ import { MovimientosByUsuarioPage } from './modules/movimientos/MovimientosByUsu
 import { MovimientosByEstadoPage } from './modules/movimientos/MovimientosByEstadoPage';
 import { MovimientosHistorialPage } from './modules/movimientos/MovimientosHistorialPage';
 import { ExportMovimientosPage } from './modules/movimientos/ExportMovimientosPage';
+import { MovimientosAnuladosPage } from './modules/movimientos/MovimientosAnuladosPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
 import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
 import { authService } from './modules/auth/auth.service';
@@ -191,6 +192,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ExportMovimientosPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/movimientos/anulados"
+            element={
+              <ProtectedRoute>
+                <MovimientosAnuladosPage />
               </ProtectedRoute>
             }
           />

@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ListFilter, FileText, ArrowLeft, Download } from 'lucide-react';
+import { User, ListFilter, FileText, ArrowLeft, Download, XCircle } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
+import { canViewCancelledOrders } from '../../shared/config/permissions';
+import { useAuthStore } from '../../store/auth.store';
 
 interface MenuCardProps {
   title: string;
@@ -36,6 +38,8 @@ const MenuCard: React.FC<MenuCardProps> = ({ title, description, icon, onClick }
 
 export const MovimientosIndexPage: React.FC = () => {
   const navigate = useNavigate();
+  const user = useAuthStore(state => state.user);
+  const userSector = user?.sector;
 
   const menuCards = [
     {
@@ -63,6 +67,16 @@ export const MovimientosIndexPage: React.FC = () => {
       path: '/movimientos/export',
     },
   ];
+
+  // Add cancelled orders card only for ADMIN, CHESS, EXPEDICION
+  if (canViewCancelledOrders(userSector)) {
+    menuCards.push({
+      title: 'Pedidos Anulados',
+      description: 'Ver listado de pedidos anulados',
+      icon: <XCircle size={48} />,
+      path: '/movimientos/anulados',
+    });
+  }
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">

@@ -1,5 +1,5 @@
-// Estado de pedido - 5 estados válidos
-export type EstadoPedido = 'PENDIENTE' | 'EN PREPARACION' | 'PREPARADO' | 'TESORERIA' | 'ENTREGADO';
+// Estado de pedido - 6 estados válidos
+export type EstadoPedido = 'PENDIENTE' | 'EN PREPARACION' | 'PREPARADO' | 'TESORERIA' | 'ENTREGADO' | 'ANULADO';
 
 // Usuario asociado al movimiento
 export interface MovimientoUsuario {
