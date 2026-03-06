@@ -5,6 +5,8 @@ export interface Fletero {
   dsFletero: string;
   seguimiento: boolean;
   liquidacion: boolean;
+  telefono1: string;
+  telefono2: string;
 }
 
 export interface UpdateSeguimientoDTO {
