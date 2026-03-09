@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ListFilter, FileText, ArrowLeft, Download, XCircle } from 'lucide-react';
+import { Search, ArrowLeft, Download, XCircle } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
@@ -45,22 +45,10 @@ export const MovimientosIndexPage: React.FC = () => {
 
   const menuCards = [
     {
-      title: 'Buscar por Usuario',
-      description: 'Consultar movimientos de un usuario específico',
-      icon: <User size={48} />,
-      path: '/movimientos/usuario',
-    },
-    {
-      title: 'Buscar por Estado',
-      description: 'Consultar movimientos por estado de pedido',
-      icon: <ListFilter size={48} />,
-      path: '/movimientos/estado',
-    },
-    {
-      title: 'Historial de Pedido',
-      description: 'Ver todos los movimientos de un pedido',
-      icon: <FileText size={48} />,
-      path: '/movimientos/historial',
+      title: 'Buscar Movimientos',
+      description: 'Consultar información y estado de movimientos con filtros avanzados',
+      icon: <Search size={48} />,
+      path: '/movimientos/buscar',
     },
     {
       title: 'Exportar Movimientos',

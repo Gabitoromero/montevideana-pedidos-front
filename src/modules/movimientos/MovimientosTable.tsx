@@ -69,13 +69,13 @@ export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos 
                 {/* ID Pedido */}
                 <td className="py-4 px-6">
                   <span className="font-mono font-bold text-[var(--primary)]">
-                    {movimiento.idPedido}
+                    {movimiento.pedido.idPedido}
                   </span>
                 </td>
 
                 {/* Transporte */}
-                <td className="py-4 px-6 text-[var(--text-primary)]">
-                  {movimiento.fletero.dsFletero}
+                <td className="py-4 px-6 text-[var(--text-primary)] max-w-[200px] truncate" title={movimiento.pedido.fletero?.dsFletero}>
+                  {movimiento.pedido.fletero?.dsFletero || 'N/A'}
                 </td>
 
                 {/* Estado Inicial */}
@@ -83,12 +83,12 @@ export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos 
                   <span
                     className="px-3 py-1 rounded-full text-sm font-semibold"
                     style={{
-                      backgroundColor: `${getEstadoColor(movimiento.estadoInicial)}20`,
-                      color: getEstadoColor(movimiento.estadoInicial),
-                      border: `1px solid ${getEstadoColor(movimiento.estadoInicial)}40`
+                      backgroundColor: `${getEstadoColor(movimiento.estadoInicial.nombreEstado)}20`,
+                      color: getEstadoColor(movimiento.estadoInicial.nombreEstado),
+                      border: `1px solid ${getEstadoColor(movimiento.estadoInicial.nombreEstado)}40`
                     }}
                   >
-                    {movimiento.estadoInicial}
+                    {movimiento.estadoInicial.nombreEstado}
                   </span>
                 </td>
 
@@ -97,12 +97,12 @@ export const MovimientosTable: React.FC<MovimientosTableProps> = ({ movimientos 
                   <span
                     className="px-3 py-1 rounded-full text-sm font-semibold"
                     style={{
-                      backgroundColor: `${getEstadoColor(movimiento.estadoFinal)}20`,
-                      color: getEstadoColor(movimiento.estadoFinal),
-                      border: `1px solid ${getEstadoColor(movimiento.estadoFinal)}40`
+                      backgroundColor: `${getEstadoColor(movimiento.estadoFinal.nombreEstado)}20`,
+                      color: getEstadoColor(movimiento.estadoFinal.nombreEstado),
+                      border: `1px solid ${getEstadoColor(movimiento.estadoFinal.nombreEstado)}40`
                     }}
                   >
-                    {movimiento.estadoFinal}
+                    {movimiento.estadoFinal.nombreEstado}
                   </span>
                 </td>
 

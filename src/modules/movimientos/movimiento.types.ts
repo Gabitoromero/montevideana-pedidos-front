@@ -13,15 +13,27 @@ export interface MovimientoFletero {
   dsFletero: string;
 }
 
+// Estado asociado al movimiento
+export interface MovimientoEstado {
+  idEstado: number;
+  nombreEstado: string;
+}
+
+// Pedido asociado al movimiento
+export interface MovimientoPedido {
+  idPedido: string;
+  fechaHora: string;
+  fletero: MovimientoFletero;
+}
+
 // Movimiento individual
 export interface Movimiento {
   fechaHora: string; // ISO 8601 format
-  idPedido: string; // Formato: 8 dígitos (ej: "00226957")
-  estadoInicial: EstadoPedido;
-  estadoFinal: EstadoPedido;
+  pedido: MovimientoPedido;
+  estadoInicial: MovimientoEstado;
+  estadoFinal: MovimientoEstado;
   usuario: MovimientoUsuario;
-  fletero: MovimientoFletero;
-  motivoAnulacion: string;
+  motivoAnulacion?: string;
 }
 
 // Objeto de paginación
@@ -47,9 +59,15 @@ export interface MovimientosResponse {
   data: Movimiento[];
 }
 
-// Parámetros de consulta para endpoints con paginación
+// Parámetros de consulta para endpoints con paginación y búsqueda
 export interface MovimientoQueryParams {
-  fechaInicio: string; // Formato: YYYY-MM-DD
+  fechaInicio?: string; // Formato: YYYY-MM-DD. Obligatorio si no hay idPedido
   fechaFin?: string; // Formato: YYYY-MM-DD (opcional)
+  idPedido?: string; // Opcional, anula restricción de fechas si está presente
+  idUsuario?: number; // Opcional, ID de usuario
+  sector?: string; // Opcional, sector del usuario
+  estado?: EstadoPedido; // Opcional, estado final
+  search?: string; // Opcional, búsqueda libre (ej. descripción de fletero)
   page?: number; // Default: 1
 }
+

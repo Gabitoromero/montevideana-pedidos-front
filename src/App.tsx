@@ -14,9 +14,7 @@ import { CreateUserPage } from './modules/users/CreateUserPage';
 import { EditUserPage } from './modules/users/EditUserPage';
 import { FleterosListPage } from './modules/fleteros/FleterosListPage';
 import { MovimientosIndexPage } from './modules/movimientos/MovimientosIndexPage';
-import { MovimientosByUsuarioPage } from './modules/movimientos/MovimientosByUsuarioPage';
-import { MovimientosByEstadoPage } from './modules/movimientos/MovimientosByEstadoPage';
-import { MovimientosHistorialPage } from './modules/movimientos/MovimientosHistorialPage';
+import { MovimientosBuscarPage } from './modules/movimientos/MovimientosBuscarPage';
 import { ExportMovimientosPage } from './modules/movimientos/ExportMovimientosPage';
 import { MovimientosAnuladosPage } from './modules/movimientos/MovimientosAnuladosPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
@@ -161,28 +159,10 @@ function App() {
           />
 
           <Route
-            path="/movimientos/usuario"
+            path="/movimientos/buscar"
             element={
               <ProtectedRoute>
-                <MovimientosByUsuarioPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/movimientos/estado"
-            element={
-              <ProtectedRoute>
-                <MovimientosByEstadoPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/movimientos/historial"
-            element={
-              <ProtectedRoute>
-                <MovimientosHistorialPage />
+                <MovimientosBuscarPage />
               </ProtectedRoute>
             }
           />

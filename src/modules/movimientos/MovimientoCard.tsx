@@ -39,21 +39,29 @@ export const MovimientoCard: React.FC<MovimientoCardProps> = ({ movimiento }) =>
         <div className="flex items-center justify-between">
           <span className="text-sm text-[var(--text-secondary)]">Pedido</span>
           <span className="text-sm font-mono font-bold text-[var(--primary)]">
-            {movimiento.idPedido}
+            {movimiento.pedido.idPedido}
           </span>
         </div>
 
         {/* Transición de Estado */}
         <div className="bg-[var(--bg-lighter)] rounded-lg p-3">
-          <div className="flex items-center justify-center gap-3">
-            <span className="px-3 py-1 rounded-full bg-[var(--error)]/20 text-[var(--error)] text-xs font-semibold">
-              {movimiento.estadoInicial}
+          <div className="flex items-center justify-center gap-3 space-x-2">
+            <span className="px-3 py-1 rounded-full bg-[var(--error)]/20 text-[var(--error)] text-xs font-semibold text-center">
+              {movimiento.estadoInicial.nombreEstado}
             </span>
-            <ArrowRight size={20} className="text-[var(--text-secondary)]" />
-            <span className="px-3 py-1 rounded-full bg-[var(--success)]/20 text-[var(--success)] text-xs font-semibold">
-              {movimiento.estadoFinal}
+            <ArrowRight size={20} className="text-[var(--text-secondary)] flex-shrink-0" />
+            <span className="px-3 py-1 rounded-full bg-[var(--success)]/20 text-[var(--success)] text-xs font-semibold text-center">
+              {movimiento.estadoFinal.nombreEstado}
             </span>
           </div>
+        </div>
+
+        {/* Fletero */}
+        <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
+          <span className="text-sm text-[var(--text-secondary)]">Fletero</span>
+          <span className="text-sm font-medium text-[var(--text-primary)] truncate max-w-[200px]" title={movimiento.pedido.fletero?.dsFletero}>
+            {movimiento.pedido.fletero?.dsFletero || 'N/A'}
+          </span>
         </div>
 
         {/* Usuario */}
