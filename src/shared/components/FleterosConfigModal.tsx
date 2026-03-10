@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { z } from 'zod';
 import type { Fletero } from '../../modules/fleteros/fleteros.service';
 
 interface FleterosConfigModalProps {
   isOpen: boolean;
   fletero: Fletero | null;
   onClose: () => void;
-  onSave: (seguimiento: boolean, liquidacionManual: boolean) => Promise<void>;
+  onSave: (seguimiento: boolean, liquidacionManual: boolean, telefono1: string, telefono2: string) => Promise<void>;
 }
 
 export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
@@ -17,22 +18,46 @@ export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
 }) => {
   const [seguimiento, setSeguimiento] = useState(false);
   const [liquidacion, setLiquidacion] = useState(false);
+  const [telefono1, setTelefono1] = useState('');
+  const [telefono2, setTelefono2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{telefono1?: string; telefono2?: string}>({});
+  //sin guiones
+  const phoneSchema = z.string().refine(
+    (val) => val === '' || (/^\d+$/.test(val) && val.length >= 10 && val.length <= 15),
+    { message: 'Debe contener entre 10 y 15 dígitos numéricos sin guiones' }
+  );
 
   // Update local state when fletero changes
   useEffect(() => {
     if (fletero) {
       setSeguimiento(fletero.seguimiento);
       setLiquidacion(fletero.liquidacion);
+      setTelefono1(fletero.telefono1 || '');
+      setTelefono2(fletero.telefono2 || '');
+      setErrors({});
     }
   }, [fletero]);
 
   if (!isOpen || !fletero) return null;
 
   const handleSave = async () => {
+    // Validate phones before saving
+    const t1Validation = phoneSchema.safeParse(telefono1.trim());
+    const t2Validation = phoneSchema.safeParse(telefono2.trim());
+
+    if (!t1Validation.success || !t2Validation.success) {
+      setErrors({
+        telefono1: !t1Validation.success ? t1Validation.error.issues[0].message : undefined,
+        telefono2: !t2Validation.success ? t2Validation.error.issues[0].message : undefined,
+      });
+      return;
+    }
+
+    setErrors({});
     setIsLoading(true);
     try {
-      await onSave(seguimiento, liquidacion);
+      await onSave(seguimiento, liquidacion, telefono1.trim(), telefono2.trim());
       onClose();
     } catch (error) {
       // Error handling is done in parent component
@@ -140,6 +165,45 @@ export const FleterosConfigModal: React.FC<FleterosConfigModalProps> = ({
             </span>
           </div>
         </div>
+
+        {/* Teléfonos Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 mt-4 text-left">
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Teléfono 1</label>
+            <input 
+              type="text" 
+              value={telefono1} 
+              onChange={(e) => {
+                // Sanitizar input para admitir solo números sobre la marcha
+                const valorSanitizado = e.target.value.replace(/\D/g, '');
+                setTelefono1(valorSanitizado);
+                if (errors.telefono1) setErrors({...errors, telefono1: undefined});
+              }} 
+              placeholder="Ej: 5493410000000"
+              className={`w-full px-4 py-2 rounded-lg bg-[var(--bg-primary)] border-2 ${errors.telefono1 ? 'border-[var(--error)]' : 'border-[var(--border)]'} text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
+            />
+            {errors.telefono1 && <p className="text-[var(--error)] text-xs mt-1">{errors.telefono1}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Teléfono 2 (Opcional)</label>
+            <input 
+              type="text" 
+              value={telefono2} 
+              onChange={(e) => {
+                // Sanitizar input para admitir solo números sobre la marcha
+                const valorSanitizado = e.target.value.replace(/\D/g, '');
+                setTelefono2(valorSanitizado);
+                if (errors.telefono2) setErrors({...errors, telefono2: undefined});
+              }} 
+              placeholder="Ej: 5493410000000"
+              className={`w-full px-4 py-2 rounded-lg bg-[var(--bg-primary)] border-2 ${errors.telefono2 ? 'border-[var(--error)]' : 'border-[var(--border)]'} text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
+            />
+            {errors.telefono2 && <p className="text-[var(--error)] text-xs mt-1">{errors.telefono2}</p>}
+          </div>
+        </div>
+        <p className="text-[var(--text-tertiary)] text-xs text-center mb-8">
+          Al guardar con un campo vacío se borrará el teléfono.
+        </p>
 
         {/* Save Button */}
         <div className="flex justify-center">

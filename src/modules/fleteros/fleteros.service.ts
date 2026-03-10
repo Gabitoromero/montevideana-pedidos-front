@@ -65,6 +65,17 @@ class FleterosService {
     );
     return response.data.data;
   }
+
+  /**
+   * Actualizar teléfonos de un fletero
+   */
+  async updateTelefonos(id: number, telefono1: string, telefono2: string): Promise<Fletero> {
+    const response = await apiClient.patch<{success: boolean; data: Fletero}>(
+      `/fleteros/${id}/telefonos`,
+      { telefono1, telefono2 }
+    );
+    return response.data.data;
+  }
 }
 
 export const fleterosService = new FleterosService();

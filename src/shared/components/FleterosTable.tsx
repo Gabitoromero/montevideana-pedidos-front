@@ -14,6 +14,8 @@ export const FleterosTable: React.FC<FleterosTableProps> = ({ fleteros, onFleter
           <tr className="border-b-2 border-[var(--border)]">
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">ID</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Descripción</th>
+            <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Teléfono 1</th>
+            <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Teléfono 2</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Seguimiento</th>
             <th className="text-left py-4 px-6 text-[var(--text-primary)] font-bold">Liquidación</th>
           </tr>
@@ -21,7 +23,7 @@ export const FleterosTable: React.FC<FleterosTableProps> = ({ fleteros, onFleter
         <tbody>
           {fleteros.length === 0 ? (
             <tr>
-              <td colSpan={4} className="text-center py-8 text-[var(--text-secondary)]">
+              <td colSpan={6} className="text-center py-8 text-[var(--text-secondary)]">
                 No se encontraron choferes
               </td>
             </tr>
@@ -37,6 +39,12 @@ export const FleterosTable: React.FC<FleterosTableProps> = ({ fleteros, onFleter
                 </td>
                 <td className="py-4 px-6 text-[var(--text-primary)]">
                   {fletero.dsFletero}
+                </td>
+                <td className="py-4 px-6 text-[var(--text-secondary)]">
+                  {fletero.telefono1 || '-'}
+                </td>
+                <td className="py-4 px-6 text-[var(--text-secondary)]">
+                  {fletero.telefono2 || '-'}
                 </td>
                 <td className="py-4 px-6">
                   {fletero.seguimiento ? (

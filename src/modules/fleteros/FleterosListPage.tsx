@@ -48,7 +48,7 @@ export const FleterosListPage: React.FC = () => {
     setIsConfigModalOpen(true);
   };
 
-  const handleSaveConfig = async (seguimiento: boolean, liquidacion: boolean) => {
+  const handleSaveConfig = async (seguimiento: boolean, liquidacion: boolean, telefono1: string, telefono2: string) => {
     if (!selectedFletero) return;
 
     try {
@@ -60,6 +60,11 @@ export const FleterosListPage: React.FC = () => {
       // Update liquidacion if changed
       if (liquidacion !== selectedFletero.liquidacion) {
         await fleterosService.updateLiquidacion(selectedFletero.idFletero, liquidacion);
+      }
+
+      // Update telefonos if changed
+      if (telefono1 !== (selectedFletero.telefono1 || '') || telefono2 !== (selectedFletero.telefono2 || '')) {
+        await fleterosService.updateTelefonos(selectedFletero.idFletero, telefono1, telefono2);
       }
 
       setIsConfigModalOpen(false);
