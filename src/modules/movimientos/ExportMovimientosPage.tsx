@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, AlertCircle } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
+import { useThemeStore } from '../../store/theme.store';
 import { Button } from '../../shared/components/Button';
 import { Card } from '../../shared/components/Card';
 import { movimientoService } from './movimiento.service';
 
 export const ExportMovimientosPage: React.FC = () => {
   const navigate = useNavigate();
+  const { theme } = useThemeStore();
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -92,6 +94,11 @@ export const ExportMovimientosPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <style>{`
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: ${theme === 'dark' ? 'invert(1) brightness(0.8)' : 'none'};
+        }
+      `}</style>
       <FullscreenButton />
       <Sidebar />
 

@@ -135,15 +135,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
                 </>
               )}
             </button>
-
-            {/* System Info - Placeholder 
-            <button
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group opacity-50 cursor-not-allowed"
-              disabled
-            >
-              <Info size={20} className="text-[var(--text-secondary)]" />
-              <span className="text-[var(--text-secondary)] font-medium">Info del Sistema</span>
-            </button>*/}
           </nav>
 
           {/* Logout Button */}
@@ -160,7 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
           {/* Footer */}
           <div className="pb-6">
             <p className="text-xs text-[var(--text-tertiary)] text-center">
-              La Montevideana System v1.0
+              Monthelado System v2.0 - MaciaSoft
             </p>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, XCircle, Search, Filter, Calendar, X } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
+import { useThemeStore } from '../../store/theme.store';
 import { getCancelledOrders } from '../orders/cancelledOrders.service';
 import type { PedidoConMovimiento } from '../orders/order.types';
 
@@ -10,6 +11,7 @@ type FilterType = 'idPedido' | 'fletero' | 'usuario';
 
 export const MovimientosAnuladosPage: React.FC = () => {
   const navigate = useNavigate();
+  const { theme } = useThemeStore();
   const [orders, setOrders] = useState<PedidoConMovimiento[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<PedidoConMovimiento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -96,6 +98,11 @@ export const MovimientosAnuladosPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <style>{`
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: ${theme === 'dark' ? 'invert(1) brightness(0.8)' : 'none'};
+        }
+      `}</style>
       <FullscreenButton />
       <Sidebar />
 
