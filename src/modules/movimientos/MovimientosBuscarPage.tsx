@@ -4,13 +4,38 @@ import { ArrowLeft, Search, ChevronLeft, ChevronRight, Filter } from 'lucide-rea
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { Button } from '../../shared/components/Button';
-import { MovimientoCard } from './MovimientoCard';
 import { movimientoService } from './movimiento.service';
 import { userService } from '../users/user.service';
 import type { Movimiento, EstadoPedido } from './movimiento.types';
 import type { Usuario } from '../users/user.service';
+import type { Fletero } from '../fleteros/fleteros.service';
+import { fleterosService } from '../fleteros/fleteros.service';
+import Select from 'react-select';
+import { z } from 'zod';
+import { useThemeStore } from '../../store/theme.store';
 
 type SectorFilter = 'Todos' | 'ADMIN' | 'CAMARA' | 'EXPEDICION' | 'CHESS';
+
+const ESTADO_COLORS: Record<string, string> = {
+  PENDIENTE: '#f59e0b', // Naranja
+  'EN PREPARACION': '#3b82f6', // Azul
+  'EN PREPARACIÓN': '#3b82f6', // Azul
+  PREPARADO: '#8b5cf6', // Púrpura
+  TESORERIA: '#06b6d4', // Cyan
+  TESORERÍA: '#06b6d4', // Cyan
+  ENTREGADO: '#10b981', // Verde
+  ANULADO: '#ef4444', // Rojo
+};
+
+const buscarFormSchema = z.object({
+  idPedido: z.string().refine(val => val.trim() === '' || /^\d+$/.test(val.trim()), {
+    message: 'El ID de pedido debe contener solo números',
+  }),
+  fechaInicio: z.string(),
+}).refine((data) => data.idPedido.trim() !== '' || data.fechaInicio.trim() !== '', {
+  message: 'Debes ingresar una Fecha de Inicio obligatoriamente si no buscas por ID.',
+  path: ['fechaInicio'],
+});
 
 export const MovimientosBuscarPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +49,10 @@ export const MovimientosBuscarPage: React.FC = () => {
   const [estadoFilter, setEstadoFilter] = useState<EstadoPedido | ''>('');
   const [selectedUsuarioId, setSelectedUsuarioId] = useState<number | ''>('');
   const [searchText, setSearchText] = useState('');
+  
+  // Theme y Fleteros
+  const { theme } = useThemeStore();
+  const [fleteros, setFleteros] = useState<Fletero[]>([]);
 
   // Paginación y Estado
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,28 +62,106 @@ export const MovimientosBuscarPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [zodErrors, setZodErrors] = useState<Record<string, string>>({});
 
-  // Cargar usuarios al montar
+  // Cargar usuarios y fleteros al montar
   useEffect(() => {
-    const loadUsuarios = async () => {
+    const loadData = async () => {
       try {
-        const data = await userService.getAllUsers();
-        setUsuarios(data);
+        const [usersData, fleterosData] = await Promise.all([
+          userService.getAllUsers(),
+          fleterosService.getAllFleteros()
+        ]);
+        setUsuarios(usersData);
+        setFleteros(fleterosData);
       } catch (err) {
-        console.error('Error al cargar usuarios:', err);
+        console.error('Error al cargar datos iniciales:', err);
       }
     };
-    loadUsuarios();
+    loadData();
   }, []);
+
+  // Opciones para React Select
+  const usuarioOptions = [
+    { value: '', label: 'Cualquier usuario...' },
+    ...usuarios
+      .filter(u => sectorFilter === 'Todos' || sectorFilter === '' ? true : u.sector === sectorFilter)
+      .map(u => ({
+        value: u.id,
+        label: `${u.nombre} ${u.apellido} (${u.sector})`
+      }))
+  ];
+
+  const fleteroOptions = [
+    { value: '', label: 'Cualquier fletero...' },
+    ...fleteros.map(f => ({
+      value: f.dsFletero,
+      label: f.dsFletero
+    }))
+  ];
+
+  // Estilos personalizados para react-select para adaptarse al theme dark/light
+  const selectStyles = {
+    control: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: 'var(--bg-lighter)',
+      borderColor: state.isFocused ? 'var(--primary)' : 'var(--border)',
+      color: 'var(--text-primary)',
+      padding: '2px',
+      borderRadius: '0.5rem',
+      boxShadow: state.isFocused ? '0 0 0 1px var(--primary)' : 'none',
+      '&:hover': {
+        borderColor: 'var(--primary)'
+      }
+    }),
+    menu: (base: any) => ({
+      ...base,
+      backgroundColor: 'var(--bg-secondary)',
+      border: '1px solid var(--border)',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      zIndex: 50
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isSelected 
+        ? 'var(--primary)' 
+        : state.isFocused 
+          ? 'var(--bg-lighter)' 
+          : 'transparent',
+      color: state.isSelected ? '#ffffff' : 'var(--text-primary)',
+      cursor: 'pointer',
+      '&:active': {
+        backgroundColor: 'var(--primary)'
+      }
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: 'var(--text-primary)'
+    }),
+    input: (base: any) => ({
+      ...base,
+      color: 'var(--text-primary)'
+    })
+  };
 
   const handleSearch = async (e?: React.FormEvent, pageStr?: number) => {
     if (e) e.preventDefault();
     
-    // Validación Backend requiere o un ID Pedido o una Fecha Inicio
-    if (!idPedido && !fechaInicio) {
-      setError('Debes ingresar una Fecha de Inicio o un ID de Pedido para buscar.');
+    // Validación Backend / Frontend con Zod
+    const validationResult = buscarFormSchema.safeParse({ idPedido, fechaInicio });
+    if (!validationResult.success) {
+      const fieldErrors: Record<string, string> = {};
+      validationResult.error.issues.forEach(issue => {
+        if (issue.path[0] !== undefined) {
+          fieldErrors[String(issue.path[0])] = issue.message;
+        }
+      });
+      setZodErrors(fieldErrors);
+      setError('Por favor, corrige los errores en el formulario para buscar.');
       return;
     }
+    
+    setZodErrors({});
 
     const targetPage = pageStr || (e ? 1 : currentPage);
     if (e) setCurrentPage(1);
@@ -83,7 +190,7 @@ export const MovimientosBuscarPage: React.FC = () => {
       console.error('Datos del error del backend (Zod):', err.response?.data);
       
       if (err.response?.status === 404) {
-        setError('No se encontraron movimientos que coincidan con la búsqueda.');
+        // No hay resultados - se maneja visualmente con el cartel de no encontrados sin ser un Error rojo.
       } else {
         const backendMessage = err.response?.data?.message || err.response?.data?.error;
         if (Array.isArray(backendMessage)) {
@@ -125,6 +232,11 @@ export const MovimientosBuscarPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
+      <style>{`
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: ${theme === 'dark' ? 'invert(1) brightness(0.8)' : 'none'};
+        }
+      `}</style>
       <FullscreenButton />
       <Sidebar />
 
@@ -149,7 +261,7 @@ export const MovimientosBuscarPage: React.FC = () => {
               <Filter size={20} />
               Filtros Principales
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">ID Pedido</label>
@@ -157,9 +269,17 @@ export const MovimientosBuscarPage: React.FC = () => {
                   type="text"
                   placeholder="Ej: 00226957"
                   value={idPedido}
-                  onChange={(e) => setIdPedido(e.target.value)}
-                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
+                  onChange={(e) => {
+                    setIdPedido(e.target.value);
+                    if (zodErrors.idPedido) {
+                      setZodErrors({...zodErrors, idPedido: ''});
+                    }
+                  }}
+                  className={`w-full px-4 py-2 bg-[var(--bg-lighter)] border ${zodErrors.idPedido ? 'border-[var(--error)]' : 'border-[var(--border)]'} rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]`}
                 />
+                {zodErrors.idPedido && (
+                  <p className="text-[var(--error)] text-sm mt-1">{zodErrors.idPedido}</p>
+                )}
               </div>
 
               <div>
@@ -169,9 +289,18 @@ export const MovimientosBuscarPage: React.FC = () => {
                 <input
                   type="date"
                   value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
-                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
+                  max={new Date().toISOString().split('T')[0]}
+                  onChange={(e) => {
+                    setFechaInicio(e.target.value);
+                    if (zodErrors.fechaInicio) {
+                      setZodErrors({...zodErrors, fechaInicio: ''});
+                    }
+                  }}
+                  className={`w-full px-4 py-2 bg-[var(--bg-lighter)] border ${zodErrors.fechaInicio ? 'border-[var(--error)]' : 'border-[var(--border)]'} rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]`}
                 />
+                {zodErrors.fechaInicio && (
+                  <p className="text-[var(--error)] text-sm mt-1">{zodErrors.fechaInicio}</p>
+                )}
               </div>
 
               <div>
@@ -179,18 +308,8 @@ export const MovimientosBuscarPage: React.FC = () => {
                 <input
                   type="date"
                   value={fechaFin}
+                  max={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setFechaFin(e.target.value)}
-                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Texto Libre (Fletero, etc.)</label>
-                <input
-                  type="text"
-                  placeholder="Buscar en descripciones..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
                   className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
                 />
               </div>
@@ -199,10 +318,10 @@ export const MovimientosBuscarPage: React.FC = () => {
 
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-[var(--text-secondary)] mb-4 uppercase tracking-wider">Filtros Adicionales</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Sector</label>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Sector del usuario</label>
                 <select
                   value={sectorFilter}
                   onChange={(e) => setSectorFilter(e.target.value as SectorFilter)}
@@ -217,7 +336,7 @@ export const MovimientosBuscarPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Estado</label>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Estado final</label>
                 <select
                   value={estadoFilter}
                   onChange={(e) => setEstadoFilter(e.target.value as EstadoPedido)}
@@ -235,18 +354,30 @@ export const MovimientosBuscarPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Usuario</label>
-                <select
-                  value={selectedUsuarioId}
-                  onChange={(e) => setSelectedUsuarioId(e.target.value ? Number(e.target.value) : '')}
-                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
-                >
-                  <option value="">Cualquier usuario...</option>
-                  {usuarios.map((usuario) => (
-                    <option key={usuario.id} value={usuario.id}>
-                      {usuario.nombre} {usuario.apellido} ({usuario.sector})
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  options={usuarioOptions}
+                  styles={selectStyles}
+                  placeholder="Buscar usuario..."
+                  value={usuarioOptions.find(opt => opt.value === selectedUsuarioId) || usuarioOptions[0]}
+                  onChange={(option) => setSelectedUsuarioId(option?.value !== undefined ? (option.value as number | '') : '')}
+                  isClearable={false}
+                  isSearchable={true}
+                  noOptionsMessage={() => "No se encontraron usuarios"}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Fletero (Descripción)</label>
+                <Select
+                  options={fleteroOptions}
+                  styles={selectStyles}
+                  placeholder="Buscar fletero..."
+                  value={fleteroOptions.find(opt => opt.value === searchText) || (searchText ? { value: searchText, label: searchText } : fleteroOptions[0])}
+                  onChange={(option) => setSearchText(option?.value ? String(option.value) : '')}
+                  isClearable={false}
+                  isSearchable={true}
+                  noOptionsMessage={() => "No se encontraron fleteros"}
+                />
               </div>
             </div>
           </div>
@@ -280,10 +411,63 @@ export const MovimientosBuscarPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                  {movimientos.map((movimiento, index) => (
-                    <MovimientoCard key={index} movimiento={movimiento} />
-                  ))}
+                <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg overflow-hidden mb-8 shadow-sm">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-[var(--bg-lighter)] text-[var(--text-secondary)] border-b border-[var(--border)]">
+                          <th className="px-6 py-4 font-semibold text-sm">Fecha y Hora</th>
+                          <th className="px-6 py-4 font-semibold text-sm">Pedido</th>
+                          <th className="px-6 py-4 font-semibold text-sm">Usuario</th>
+                          <th className="px-6 py-4 font-semibold text-sm">Estado Inicial</th>
+                          <th className="px-6 py-4 font-semibold text-sm">Estado Final</th>
+                          <th className="px-6 py-4 font-semibold text-sm">Fletero</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {movimientos.map((movimiento, index) => (
+                          <tr key={index} className="hover:bg-[var(--bg-lighter)] transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-[var(--text-primary)]">
+                              {new Date(movimiento.fechaHora).toLocaleString('es-AR')}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-[var(--text-primary)] font-medium">
+                              {movimiento.pedido.idPedido}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-[var(--text-primary)]">
+                              {movimiento.usuario.nombre} {movimiento.usuario.apellido}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className="px-3 py-1 rounded-full text-sm font-semibold"
+                                style={{
+                                  backgroundColor: `${ESTADO_COLORS[movimiento.estadoInicial.nombreEstado.toUpperCase()] || '#9ca3af'}20`,
+                                  color: ESTADO_COLORS[movimiento.estadoInicial.nombreEstado.toUpperCase()] || '#9ca3af',
+                                  border: `1px solid ${ESTADO_COLORS[movimiento.estadoInicial.nombreEstado.toUpperCase()] || '#9ca3af'}40`
+                                }}
+                              >
+                                {movimiento.estadoInicial.nombreEstado}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className="px-3 py-1 rounded-full text-sm font-semibold"
+                                style={{
+                                  backgroundColor: `${ESTADO_COLORS[movimiento.estadoFinal.nombreEstado.toUpperCase()] || '#9ca3af'}20`,
+                                  color: ESTADO_COLORS[movimiento.estadoFinal.nombreEstado.toUpperCase()] || '#9ca3af',
+                                  border: `1px solid ${ESTADO_COLORS[movimiento.estadoFinal.nombreEstado.toUpperCase()] || '#9ca3af'}40`
+                                }}
+                              >
+                                {movimiento.estadoFinal.nombreEstado}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-[var(--text-secondary)]">
+                              {movimiento.pedido.fletero?.dsFletero || '-'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 {totalPages > 1 && (
