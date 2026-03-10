@@ -32,9 +32,31 @@ const buscarFormSchema = z.object({
     message: 'El ID de pedido debe contener solo números',
   }),
   fechaInicio: z.string(),
-}).refine((data) => data.idPedido.trim() !== '' || data.fechaInicio.trim() !== '', {
-  message: 'Debes ingresar una Fecha de Inicio obligatoriamente si no buscas por ID.',
-  path: ['fechaInicio'],
+  fechaFin: z.string().optional(),
+}).superRefine((data, ctx) => {
+  // Regla 1: Si no hay ID, fecha Inicio es obligatoria
+  if (data.idPedido.trim() === '' && data.fechaInicio.trim() === '') {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Debes ingresar una Fecha de Inicio obligatoriamente si no buscas por ID.',
+      path: ['fechaInicio'],
+    });
+  }
+
+  // Regla 2: Rango máximo de 1 año (365 días)
+  if (data.fechaInicio && data.fechaFin) {
+    const start = new Date(data.fechaInicio);
+    const end = new Date(data.fechaFin);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    if (diffDays > 365) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'El rango de fechas no puede ser mayor a 1 año (365 días).',
+        path: ['rangoFechas'], // Agregamos un error global para el rango
+      });
+    }
+  }
 });
 
 export const MovimientosBuscarPage: React.FC = () => {
@@ -148,16 +170,25 @@ export const MovimientosBuscarPage: React.FC = () => {
     if (e) e.preventDefault();
     
     // Validación Backend / Frontend con Zod
-    const validationResult = buscarFormSchema.safeParse({ idPedido, fechaInicio });
+    const validationResult = buscarFormSchema.safeParse({ idPedido, fechaInicio, fechaFin });
     if (!validationResult.success) {
       const fieldErrors: Record<string, string> = {};
+      let hasGlobalError = false;
+      let globalErrorMessage = '';
+
       validationResult.error.issues.forEach(issue => {
-        if (issue.path[0] !== undefined) {
+        if (issue.path[0] === 'rangoFechas') {
+          hasGlobalError = true;
+          globalErrorMessage = issue.message;
+          // Marcamos ambos campos para que se pinten de rojo
+          fieldErrors['fechaInicio'] = '';
+          fieldErrors['fechaFin'] = '';
+        } else if (issue.path[0] !== undefined) {
           fieldErrors[String(issue.path[0])] = issue.message;
         }
       });
       setZodErrors(fieldErrors);
-      setError('Por favor, corrige los errores en el formulario para buscar.');
+      setError(hasGlobalError ? globalErrorMessage : 'Por favor, corrige los errores en el formulario para buscar.');
       return;
     }
     
@@ -296,7 +327,7 @@ export const MovimientosBuscarPage: React.FC = () => {
                       setZodErrors({...zodErrors, fechaInicio: ''});
                     }
                   }}
-                  className={`w-full px-4 py-2 bg-[var(--bg-lighter)] border ${zodErrors.fechaInicio ? 'border-[var(--error)]' : 'border-[var(--border)]'} rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]`}
+                  className={`w-full px-4 py-2 bg-[var(--bg-lighter)] border ${zodErrors.fechaInicio !== undefined ? 'border-[var(--error)]' : 'border-[var(--border)]'} rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]`}
                 />
                 {zodErrors.fechaInicio && (
                   <p className="text-[var(--error)] text-sm mt-1">{zodErrors.fechaInicio}</p>
@@ -309,9 +340,15 @@ export const MovimientosBuscarPage: React.FC = () => {
                   type="date"
                   value={fechaFin}
                   max={new Date().toISOString().split('T')[0]}
-                  onChange={(e) => setFechaFin(e.target.value)}
-                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
+                  onChange={(e) => {
+                    setFechaFin(e.target.value);
+                    if (zodErrors.fechaFin) setZodErrors({...zodErrors, fechaFin: ''});
+                  }}
+                  className={`w-full px-4 py-2 bg-[var(--bg-lighter)] border ${zodErrors.fechaFin !== undefined ? 'border-[var(--error)]' : 'border-[var(--border)]'} rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]`}
                 />
+                {zodErrors.fechaFin && (
+                  <p className="text-[var(--error)] text-sm mt-1">{zodErrors.fechaFin}</p>
+                )}
                 <p className="text-[var(--text-tertiary)] text-xs mt-1">Si se deja vacío, se tomará la Fecha Inicio</p>
               </div>
             </div>
