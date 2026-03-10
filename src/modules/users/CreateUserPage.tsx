@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, UserPlus, AlertCircle, CheckCircle, User, Briefcase, Lock, ArrowRight, IdCard } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { userService, type CreateUsuarioDTO } from './user.service';
+import { createUserSchema } from './user.schema';
 
 interface FormData {
   username: string;
@@ -39,24 +40,11 @@ export const CreateUserPage: React.FC = () => {
   } | null>(null);
 
   const validateField = (name: keyof FormData, value: string): string | undefined => {
-    switch (name) {
-      case 'username':
-      case 'nombre':
-      case 'apellido':
-        if (value.length < 4) {
-          return `Debe tener al menos 4 caracteres`;
-        }
-        break;
-      case 'sector':
-        if (!value) {
-          return 'Debe seleccionar un sector';
-        }
-        break;
-      case 'password':
-        if (!value) {
-          return 'La contraseña es requerida';
-        }
-        break;
+    // Pick solo el campo respectivo para validación individual
+    const fieldSchema = createUserSchema.pick({ [name]: true } as any);
+    const result = fieldSchema.safeParse({ [name]: value });
+    if (!result.success) {
+      return result.error.issues[0]?.message;
     }
     return undefined;
   };
@@ -85,17 +73,20 @@ export const CreateUserPage: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+    const result = createUserSchema.safeParse(formData);
+    if (!result.success) {
+      const newErrors: FormErrors = {};
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          newErrors[err.path[0] as keyof FormErrors] = err.message;
+        }
+      });
+      setErrors(newErrors);
+      return false;
+    }
     
-    (Object.keys(formData) as Array<keyof FormData>).forEach((key) => {
-      const error = validateField(key, formData[key]);
-      if (error) {
-        newErrors[key] = error;
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors({});
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -173,24 +164,28 @@ export const CreateUserPage: React.FC = () => {
             <h2 className="text-2xl font-bold text-[var(--text-primary)]">Crear Nuevo Usuario</h2>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Username */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="username" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Nombre de Usuario *
               </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.username ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
-                placeholder="Ingrese nombre de usuario"
-              />
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.username ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all`}
+                  placeholder="JaneDoe"
+                />
+              </div>
               {errors.username && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -200,22 +195,25 @@ export const CreateUserPage: React.FC = () => {
             </div>
 
             {/* Nombre */}
-            <div>
-              <label htmlFor="nombre" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="nombre" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Nombre *
               </label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.nombre ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
-                placeholder="Ingrese nombre"
-              />
+              <div className="relative">
+                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.nombre ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all`}
+                  placeholder="Jane"
+                />
+              </div>
               {errors.nombre && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -225,22 +223,25 @@ export const CreateUserPage: React.FC = () => {
             </div>
 
             {/* Apellido */}
-            <div>
-              <label htmlFor="apellido" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="apellido" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Apellido *
               </label>
-              <input
-                type="text"
-                id="apellido"
-                name="apellido"
-                value={formData.apellido}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.apellido ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
-                placeholder="Ingrese apellido"
-              />
+              <div className="relative">
+                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="text"
+                  id="apellido"
+                  name="apellido"
+                  value={formData.apellido}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.apellido ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all`}
+                  placeholder="Doe"
+                />
+              </div>
               {errors.apellido && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -250,26 +251,32 @@ export const CreateUserPage: React.FC = () => {
             </div>
 
             {/* Sector */}
-            <div>
-              <label htmlFor="sector" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="sector" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Sector *
               </label>
-              <select
-                id="sector"
-                name="sector"
-                value={formData.sector}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.sector ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
-              >
-                <option value="">Seleccione un sector</option>
-                <option value="ADMIN">Admin</option>
-                <option value="CAMARA">Cámara</option>
-                <option value="EXPEDICION">Expedición</option>
-                <option value="TELEVISOR">Televisor</option>
-              </select>
+              <div className="relative">
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <select
+                  id="sector"
+                  name="sector"
+                  value={formData.sector}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.sector ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all appearance-none`}
+                >
+                  <option value="">Seleccione un sector</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="CAMARA">Cámara</option>
+                  <option value="EXPEDICION">Expedición</option>
+                  <option value="TELEVISOR">Televisor</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                  <svg className="h-4 w-4 text-[var(--text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
               {errors.sector && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -279,28 +286,32 @@ export const CreateUserPage: React.FC = () => {
             </div>
 
             {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5 md:col-span-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Contraseña *
               </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.password ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors`}
-                placeholder="Ingrese contraseña"
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.password ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all`}
+                  placeholder="••••••••"
+                />
+              </div>
               {errors.password && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
                   {errors.password}
                 </p>
               )}
+            </div>
             </div>
 
             {/* Submit Status */}
@@ -328,13 +339,16 @@ export const CreateUserPage: React.FC = () => {
             )}
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-4 px-6 bg-[var(--primary)] hover:bg-[var(--primary-light)] text-white font-bold rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {isSubmitting ? 'Creando usuario...' : 'Crear Usuario'}
-            </button>
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 px-6 bg-[var(--primary)] hover:bg-[var(--primary-light)] text-white font-bold rounded-lg shadow-lg shadow-[var(--primary)]/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span>{isSubmitting ? 'Creando usuario...' : 'Crear Usuario'}</span>
+                {!isSubmitting && <ArrowRight size={20} />}
+              </button>
+            </div>
           </form>
         </Card>
       </div>

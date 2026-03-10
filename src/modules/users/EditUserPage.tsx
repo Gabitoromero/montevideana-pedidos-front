@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, UserX, AlertCircle, CheckCircle, Loader2, MoreVertical, Trash2 } from 'lucide-react';
+import { ArrowLeft, Save, UserX, AlertCircle, CheckCircle, Loader2, MoreVertical, Trash2, User, IdCard, Briefcase, Lock } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { userService, type UpdateUsuarioDTO } from './user.service';
 import { useAuthStore } from '../../store/auth.store';
+import { editUserSchema } from './user.schema';
 
 interface FormData {
   username: string;
@@ -80,25 +81,12 @@ export const EditUserPage: React.FC = () => {
   };
 
   const validateField = (name: keyof FormData, value: string): string | undefined => {
-    switch (name) {
-      case 'username':
-      case 'nombre':
-      case 'apellido':
-        if (value.length < 4) {
-          return `Debe tener al menos 4 caracteres`;
-        }
-        break;
-      case 'sector':
-        if (!value) {
-          return 'Debe seleccionar un sector';
-        }
-        break;
-      case 'password':
-        // Password is optional for editing
-        if (value && value.length < 4) {
-          return 'La contraseña debe tener al menos 4 caracteres';
-        }
-        break;
+    if (name === 'activo') return undefined; // No validamos el boolean activo aquí
+    // Pick solo el campo respectivo para validación individual
+    const fieldSchema = editUserSchema.pick({ [name]: true } as any);
+    const result = fieldSchema.safeParse({ [name]: value });
+    if (!result.success) {
+      return result.error.issues[0]?.message;
     }
     return undefined;
   };
@@ -131,25 +119,29 @@ export const EditUserPage: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+    // Create a payload for validation mapping formData structure
+    const validationPayload = {
+      username: formData.username,
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      sector: formData.sector,
+      password: formData.password || ''
+    };
     
-    (['username', 'nombre', 'apellido', 'sector'] as Array<keyof FormData>).forEach((key) => {
-      const error = validateField(key, formData[key] as string);
-      if (error) {
-        newErrors[key as keyof FormErrors] = error;
-      }
-    });
-
-    // Validate password only if it's being changed
-    if (formData.password) {
-      const passwordError = validateField('password', formData.password);
-      if (passwordError) {
-        newErrors.password = passwordError;
-      }
+    const result = editUserSchema.safeParse(validationPayload);
+    if (!result.success) {
+      const newErrors: FormErrors = {};
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          newErrors[err.path[0] as keyof FormErrors] = err.message;
+        }
+      });
+      setErrors(newErrors);
+      return false;
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
+    setErrors({});
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -340,27 +332,31 @@ export const EditUserPage: React.FC = () => {
 
         {/* Form Card */}
         <Card padding="lg" className="bg-[var(--bg-secondary)] border-2 border-[var(--border)]">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Username */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="username" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Nombre de Usuario *
               </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isChessUser}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.username ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors ${
-                  isChessUser ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                placeholder="Ingrese nombre de usuario"
-              />
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isChessUser}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.username ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all ${
+                    isChessUser ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  placeholder="JaneDoe"
+                />
+              </div>
               {errors.username && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -370,25 +366,28 @@ export const EditUserPage: React.FC = () => {
             </div>
 
             {/* Nombre */}
-            <div>
-              <label htmlFor="nombre" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="nombre" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Nombre *
               </label>
-              <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isChessUser}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.nombre ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors ${
-                  isChessUser ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                placeholder="Ingrese nombre"
-              />
+              <div className="relative">
+                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isChessUser}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.nombre ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all ${
+                    isChessUser ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  placeholder="Jane"
+                />
+              </div>
               {errors.nombre && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -398,25 +397,28 @@ export const EditUserPage: React.FC = () => {
             </div>
 
             {/* Apellido */}
-            <div>
-              <label htmlFor="apellido" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="apellido" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Apellido *
               </label>
-              <input
-                type="text"
-                id="apellido"
-                name="apellido"
-                value={formData.apellido}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isChessUser}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.apellido ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors ${
-                  isChessUser ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                placeholder="Ingrese apellido"
-              />
+              <div className="relative">
+                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="text"
+                  id="apellido"
+                  name="apellido"
+                  value={formData.apellido}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isChessUser}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.apellido ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all ${
+                    isChessUser ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  placeholder="Doe"
+                />
+              </div>
               {errors.apellido && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -426,30 +428,36 @@ export const EditUserPage: React.FC = () => {
             </div>
 
             {/* Sector */}
-            <div>
-              <label htmlFor="sector" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="sector" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Sector *
               </label>
-              <select
-                id="sector"
-                name="sector"
-                value={formData.sector}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isCurrentUser || isChessUser}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.sector ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)] transition-colors ${
-                  isCurrentUser || isChessUser ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                <option value="">Seleccione un sector</option>
-                <option value="ADMIN">Admin</option>
-                <option value="CAMARA">Cámara</option>
-                <option value="EXPEDICION">Expedición</option>
-                <option value="TELEVISOR">Televisor</option>
-                {formData.sector === 'CHESS' && <option value="CHESS">CHESS</option>}
-              </select>
+              <div className="relative">
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <select
+                  id="sector"
+                  name="sector"
+                  value={formData.sector}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isCurrentUser || isChessUser}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.sector ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all appearance-none ${
+                    isCurrentUser || isChessUser ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  <option value="">Seleccione un sector</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="CAMARA">Cámara</option>
+                  <option value="EXPEDICION">Expedición</option>
+                  <option value="TELEVISOR">Televisor</option>
+                  {formData.sector === 'CHESS' && <option value="CHESS">CHESS</option>}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                  <svg className="h-4 w-4 text-[var(--text-tertiary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
               {errors.sector && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -464,25 +472,28 @@ export const EditUserPage: React.FC = () => {
             </div>
 
             {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="block text-sm font-semibold text-[var(--text-primary)] ml-1">
                 Contraseña (dejar en blanco para no cambiar)
               </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                disabled={isChessUser}
-                className={`w-full px-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
-                  errors.password ? 'border-[var(--error)]' : 'border-[var(--border)]'
-                } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:border-[var(--primary)] transition-colors ${
-                  isChessUser ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                placeholder="Nueva contraseña (opcional)"
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)]" size={20} />
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isChessUser}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg bg-[var(--bg-lighter)] border-2 ${
+                    errors.password ? 'border-[var(--error)]' : 'border-[var(--border)]'
+                  } text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all ${
+                    isChessUser ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  placeholder=" Nueva contraseña (opcional)"
+                />
+              </div>
               {errors.password && (
                 <p className="mt-2 text-sm text-[var(--error)] flex items-center gap-1">
                   <AlertCircle size={16} />
@@ -492,7 +503,8 @@ export const EditUserPage: React.FC = () => {
             </div>
 
             {/* Estado Activo - Read Only */}
-            <div className="flex items-center gap-3 p-4 bg-[var(--bg-lighter)] rounded-lg border border-[var(--border)]">
+            <div className="flex flex-col justify-end">
+              <div className="flex items-center gap-3 p-4 bg-[var(--bg-lighter)] rounded-lg border border-[var(--border)] h-[52px]">
               <input
                 type="checkbox"
                 id="activo"
@@ -507,6 +519,8 @@ export const EditUserPage: React.FC = () => {
               <span className="text-sm text-[var(--text-secondary)] ml-auto">
                 Solo lectura
               </span>
+              </div>
+            </div>
             </div>
 
             {/* Submit Status */}
@@ -535,14 +549,14 @@ export const EditUserPage: React.FC = () => {
 
             {/* Action Buttons */}
             {!isChessUser && (
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-4 px-6 bg-[var(--primary)] hover:bg-[var(--primary-light)] text-white font-bold rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  className="flex-1 py-4 px-6 bg-[var(--primary)] hover:bg-[var(--primary-light)] text-white font-bold rounded-lg shadow-lg shadow-[var(--primary)]/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Save size={20} />
-                  {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+                  <span>{isSubmitting ? 'Guardando...' : 'Guardar Cambios'}</span>
                 </button>
 
                 {!isCurrentUser && (
@@ -550,14 +564,14 @@ export const EditUserPage: React.FC = () => {
                     type="button"
                     onClick={() => setShowDeactivateConfirm(true)}
                     disabled={isSubmitting}
-                    className={`px-6 py-4 font-bold rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 ${
+                    className={`px-6 py-4 font-bold rounded-lg shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${
                       formData.activo
-                        ? 'bg-[var(--error)] hover:bg-red-600 text-white'
-                        : 'bg-green-600 hover:bg-green-700 text-white'
+                        ? 'bg-[var(--error)] hover:bg-red-600 shadow-red-600/20 text-white'
+                        : 'bg-green-600 hover:bg-green-700 shadow-green-600/20 text-white'
                     }`}
                   >
                     <UserX size={20} />
-                    {formData.activo ? 'Dar de Baja' : 'Dar de Alta'}
+                    <span>{formData.activo ? 'Dar de Baja' : 'Dar de Alta'}</span>
                   </button>
                 )}
               </div>
