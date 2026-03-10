@@ -312,6 +312,7 @@ export const MovimientosBuscarPage: React.FC = () => {
                   onChange={(e) => setFechaFin(e.target.value)}
                   className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
                 />
+                <p className="text-[var(--text-tertiary)] text-xs mt-1">Si se deja vacío, se tomará la Fecha Inicio</p>
               </div>
             </div>
           </div>
@@ -319,21 +320,6 @@ export const MovimientosBuscarPage: React.FC = () => {
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-[var(--text-secondary)] mb-4 uppercase tracking-wider">Filtros Adicionales</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              
-              <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Sector del usuario</label>
-                <select
-                  value={sectorFilter}
-                  onChange={(e) => setSectorFilter(e.target.value as SectorFilter)}
-                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
-                >
-                  <option value="">Todos los sectores...</option>
-                  <option value="ADMIN">Admin</option>
-                  <option value="CAMARA">Cámara</option>
-                  <option value="EXPEDICION">Expedición</option>
-                  <option value="CHESS">CHESS</option>
-                </select>
-              </div>
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Estado final</label>
@@ -349,6 +335,21 @@ export const MovimientosBuscarPage: React.FC = () => {
                   <option value="5">Tesorería</option>
                   <option value="6">Entregado</option>
                   <option value="7">Anulado</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Sector del usuario</label>
+                <select
+                  value={sectorFilter}
+                  onChange={(e) => setSectorFilter(e.target.value as SectorFilter)}
+                  className="w-full px-4 py-2 bg-[var(--bg-lighter)] border border-[var(--border)] rounded-lg text-[var(--text-primary)] focus:outline-none focus:border-[var(--primary)]"
+                >
+                  <option value="">Todos los sectores...</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="CAMARA">Cámara</option>
+                  <option value="EXPEDICION">Expedición</option>
+                  <option value="CHESS">CHESS</option>
                 </select>
               </div>
 
