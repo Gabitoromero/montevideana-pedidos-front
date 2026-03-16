@@ -109,6 +109,16 @@ export function canViewCancelledOrders(userSector: string | undefined): boolean 
   return ['ADMIN', 'CHESS', 'EXPEDICION'].includes(userSector);
 }
 
+export function canViewMovimientos(userSector: string | undefined): boolean {
+  if (!userSector) return false;
+  return ['ADMIN', 'CHESS', 'EXPEDICION'].includes(userSector);
+}
+
+export function canViewExportacion(userSector: string | undefined): boolean {
+  if (!userSector) return false;
+  return ['ADMIN', 'CHESS'].includes(userSector);
+}
+
 /**
  * Verifica si una ruta con parámetros coincide con un patrón
  * @param pattern - Patrón de ruta (ej: '/users/edit/:id')

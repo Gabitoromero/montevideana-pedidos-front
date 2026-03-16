@@ -17,7 +17,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
   const { theme, toggleTheme } = useThemeStore();
 
   const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
-  const canAccessMovimientos = isAdminOrChess || user?.sector === 'EXPEDICION';
+  const isExpedicion = user?.sector === 'EXPEDICION';
+  const canAccessMovimientos = isAdminOrChess || isExpedicion;
 
   // Hide sidebar completely for TELEVISOR sector
   if (user?.sector === 'TELEVISOR') {

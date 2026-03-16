@@ -4,7 +4,7 @@ import { Search, ArrowLeft, Download, XCircle } from 'lucide-react';
 import { Card } from '../../shared/components/Card';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
-import { canViewCancelledOrders } from '../../shared/config/permissions';
+import { canViewExportacion } from '../../shared/config/permissions';
 import { useAuthStore } from '../../store/auth.store';
 import { useBackNavigation } from '../../shared/hooks/useBackNavigation';
 
@@ -51,22 +51,31 @@ export const MovimientosIndexPage: React.FC = () => {
       path: '/movimientos/buscar',
     },
     {
-      title: 'Exportar Movimientos',
-      description: 'Descargar movimientos en formato CSV',
-      icon: <Download size={48} />,
-      path: '/movimientos/export',
-    },
-  ];
-
-  // Add cancelled orders card only for ADMIN, CHESS, EXPEDICION
-  if (canViewCancelledOrders(userSector)) {
-    menuCards.push({
       title: 'Pedidos Anulados',
       description: 'Ver listado de pedidos anulados',
       icon: <XCircle size={48} />,
       path: '/movimientos/anulados',
-    });
+    }
+  ];
+
+  // // Add cancelled orders card only for ADMIN, CHESS, EXPEDICION
+  if (canViewExportacion(userSector)) {
+    menuCards.push({
+      title: 'Exportar Movimientos',
+      description: 'Descargar movimientos en formato CSV',
+      icon: <Download size={48} />,
+      path: '/movimientos/export',
+    },);
   }
+
+  // if (canViewMovimientos(userSector)) {
+  //   menuCards.push({
+  //     title: 'Pedidos Anulados',
+  //     description: 'Ver listado de pedidos anulados',
+  //     icon: <XCircle size={48} />,
+  //     path: '/movimientos/anulados',
+  //   });
+  // }
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] p-8">
