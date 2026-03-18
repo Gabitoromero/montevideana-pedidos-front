@@ -39,9 +39,9 @@ export const EvaluationPopup: React.FC<EvaluationPopupProps> = ({
 
   const ratings = [
     RATING_VALUES.TERRIBLE,
-    RATING_VALUES.REGULAR,
+    // RATING_VALUES.REGULAR,
     RATING_VALUES.BIEN,
-    RATING_VALUES.MUY_BIEN,
+    // RATING_VALUES.MUY_BIEN,
     RATING_VALUES.SIN_ERRORES,
   ];
 
