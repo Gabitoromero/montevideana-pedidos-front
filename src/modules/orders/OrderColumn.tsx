@@ -6,12 +6,16 @@ interface OrderColumnProps {
   title: string;
   orders: PedidoConMovimiento[];
   colorClass: string;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
 }
 
 export const OrderColumn: React.FC<OrderColumnProps> = ({
   title,
   orders,
   colorClass,
+  hasMore = false,
+  onLoadMore,
 }) => {
   // Read VITE_DOUBLE_COLUMNS from environment (defaults to 'true')
   const doubleColumns = import.meta.env.VITE_DOUBLE_COLUMNS !== 'false';
@@ -45,6 +49,18 @@ export const OrderColumn: React.FC<OrderColumnProps> = ({
                 />
               );
             })}
+            
+            {/* Load More Button */}
+            {hasMore && onLoadMore && (
+              <div className="col-span-full pt-2">
+                <button
+                  onClick={onLoadMore}
+                  className="w-full py-3 px-4 rounded-lg border-2 border-dashed border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all font-semibold uppercase tracking-wider text-sm"
+                >
+                  Ver más
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div 

@@ -38,8 +38,8 @@ export const BillingPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       
-      const response = await getOrdersByState(selectedState);
-      setOrders(response.data || []);
+      const response = await getOrdersByState(selectedState, { limit: 100 }); // Increase limit for these specialized pages
+      setOrders(response.data.data || []);
     } catch (err: any) {
       console.error('Error fetching orders:', err);
       setError('Error al cargar los pedidos');

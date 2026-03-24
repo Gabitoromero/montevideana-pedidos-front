@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, XCircle, Search, Filter, Calendar, X } from 'lucide-react';
+import { ArrowLeft, XCircle, Search, Filter, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Sidebar } from '../../shared/components/Sidebar';
 import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { useThemeStore } from '../../store/theme.store';
@@ -16,6 +16,12 @@ export const MovimientosAnuladosPage: React.FC = () => {
   const [filteredOrders, setFilteredOrders] = useState<PedidoConMovimiento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [limit] = useState(50); // Mismo default que el backend
 
   // Filter states
   const [filterType, setFilterType] = useState<FilterType>('idPedido');
@@ -23,7 +29,7 @@ export const MovimientosAnuladosPage: React.FC = () => {
   const [filterDate, setFilterDate] = useState('');
 
   useEffect(() => {
-    fetchCancelledOrders();
+    fetchCancelledOrders(1);
   }, []);
 
   // Apply filters whenever orders or filter criteria change
@@ -31,18 +37,34 @@ export const MovimientosAnuladosPage: React.FC = () => {
     applyFilters();
   }, [orders, filterType, searchText, filterDate]);
 
-  const fetchCancelledOrders = async () => {
+  const fetchCancelledOrders = async (pageArg?: number) => {
+    const targetPage = pageArg || currentPage;
     try {
       setIsLoading(true);
       setError(null);
-      const data = await getCancelledOrders();
+      const response = await getCancelledOrders({ 
+        page: targetPage, 
+        limit: limit,
+        sortBy: 'fechaHora', // Ordenar por fecha por defecto
+        sortOrder: 'DESC'
+      });
+      
+      const { data, pagination } = response.data;
       setOrders(data);
+      setTotalPages(pagination.totalPages);
+      setTotal(pagination.total);
+      setCurrentPage(pagination.page);
     } catch (err: any) {
       console.error('Error fetching cancelled orders:', err);
       setError('Error al cargar los pedidos anulados');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    fetchCancelledOrders(newPage);
   };
 
   const applyFilters = () => {
@@ -203,8 +225,16 @@ export const MovimientosAnuladosPage: React.FC = () => {
 
             {/* Results count */}
             <div className="mt-4 text-sm text-[var(--text-secondary)]">
-              Mostrando <span className="font-semibold text-[var(--text-primary)]">{filteredOrders.length}</span> de <span className="font-semibold text-[var(--text-primary)]">{orders.length}</span> pedidos
+              Mostrando <span className="font-semibold text-[var(--text-primary)]">
+                {filteredOrders.length}
+              </span> de <span className="font-semibold text-[var(--text-primary)]">{total}</span> pedidos anulados
+              {totalPages > 1 && ` (Página ${currentPage} de ${totalPages})`}
             </div>
+            {hasActiveFilters && (
+              <div className="mt-2 text-xs text-amber-500 font-medium italic">
+                Nota: El filtro actual se aplica solo sobre los resultados de la página visible ({filteredOrders.length} ítems).
+              </div>
+            )}
           </div>
         )}
 
@@ -315,14 +345,34 @@ export const MovimientosAnuladosPage: React.FC = () => {
               </div>
             )}
 
-            {/* Footer with count */}
-            {filteredOrders.length > 0 && (
-              <div className="px-6 py-4 bg-[var(--bg-lighter)] border-t border-[var(--border)]">
-                <p className="text-sm text-[var(--text-secondary)]">
-                  Total: <span className="font-semibold text-[var(--text-primary)]">{filteredOrders.length}</span> pedido{filteredOrders.length !== 1 ? 's' : ''} anulado{filteredOrders.length !== 1 ? 's' : ''}
-                </p>
-              </div>
-            )}
+            {/* Footer with count and pagination */}
+            <div className="px-6 py-4 bg-[var(--bg-lighter)] border-t border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-[var(--text-secondary)]">
+                Mostrando <span className="font-semibold text-[var(--text-primary)]">{filteredOrders.length}</span> de <span className="font-semibold text-[var(--text-primary)]">{total}</span> pedido{total !== 1 ? 's' : ''} anulado{total !== 1 ? 's' : ''}
+              </p>
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1 || isLoading}
+                    className="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed hover:border-[var(--primary)] transition-colors"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <span className="text-sm text-[var(--text-primary)] font-medium px-2">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages || isLoading}
+                    className="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] disabled:opacity-50 disabled:cursor-not-allowed hover:border-[var(--primary)] transition-colors"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

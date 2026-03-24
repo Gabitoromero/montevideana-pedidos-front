@@ -36,21 +36,14 @@ export interface Movimiento {
   motivoAnulacion?: string;
 }
 
-// Objeto de paginación
-export interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
+import type { PaginationQueryParams, PaginatedData } from '../../shared/types/pagination.types';
+
+// ... (existing code follows)
 
 // Respuesta paginada (para endpoints de usuario y estado)
 export interface PaginatedMovimientosResponse {
   success: boolean;
-  data: {
-    data: Movimiento[];
-    pagination: Pagination;
-  };
+  data: PaginatedData<Movimiento>;
 }
 
 // Respuesta sin paginación (para historial de pedido)
@@ -60,7 +53,7 @@ export interface MovimientosResponse {
 }
 
 // Parámetros de consulta para endpoints con paginación y búsqueda
-export interface MovimientoQueryParams {
+export interface MovimientoQueryParams extends PaginationQueryParams {
   fechaInicio?: string; // Formato: YYYY-MM-DD. Obligatorio si no hay idPedido
   fechaFin?: string; // Formato: YYYY-MM-DD (opcional)
   idPedido?: string; // Opcional, anula restricción de fechas si está presente
@@ -68,6 +61,5 @@ export interface MovimientoQueryParams {
   sector?: string; // Opcional, sector del usuario
   estado?: EstadoPedido; // Opcional, estado final
   search?: string; // Opcional, búsqueda libre (ej. descripción de fletero)
-  page?: number; // Default: 1
 }
 

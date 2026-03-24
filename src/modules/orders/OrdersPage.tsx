@@ -17,6 +17,13 @@ export const OrdersPage: React.FC = () => {
   const [preparedOrders, setPreparedOrders] = useState<PedidoConMovimiento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Pagination states for each column
+  const [paginationInfo, setPaginationInfo] = useState({
+    [ESTADO_IDS.PENDIENTE]: { page: 1, totalPages: 1 },
+    [ESTADO_IDS.EN_PREPARACION]: { page: 1, totalPages: 1 },
+    [ESTADO_IDS.PREPARADO]: { page: 1, totalPages: 1 },
+  });
   
   // Use ref to track if component is mounted (for cleanup)
   const isMountedRef = useRef(true);
@@ -28,18 +35,34 @@ export const OrdersPage: React.FC = () => {
       // Clear any previous errors
       setError(null);
 
-      // Fetch all three states in parallel
+      // Fetch all three states in parallel (always fetch page 1 for polling)
       const [pendingRes, preparingRes, preparedRes] = await Promise.all([
-        getOrdersByState(ESTADO_IDS.PENDIENTE),
-        getOrdersByState(ESTADO_IDS.EN_PREPARACION),
-        getOrdersByState(ESTADO_IDS.PREPARADO),
+        getOrdersByState(ESTADO_IDS.PENDIENTE, { page: 1, limit: 50 }),
+        getOrdersByState(ESTADO_IDS.EN_PREPARACION, { page: 1, limit: 50 }),
+        getOrdersByState(ESTADO_IDS.PREPARADO, { page: 1, limit: 50 }),
       ]);
 
       // Only update state if component is still mounted
       if (isMountedRef.current) {
-        setPendingOrders(pendingRes.data || []);
-        setPreparingOrders(preparingRes.data || []);
-        setPreparedOrders(preparedRes.data || []);
+        setPendingOrders(pendingRes.data.data);
+        setPreparingOrders(preparingRes.data.data);
+        setPreparedOrders(preparedRes.data.data);
+        
+        setPaginationInfo({
+          [ESTADO_IDS.PENDIENTE]: { 
+            page: pendingRes.data.pagination.page, 
+            totalPages: pendingRes.data.pagination.totalPages 
+          },
+          [ESTADO_IDS.EN_PREPARACION]: { 
+            page: preparingRes.data.pagination.page, 
+            totalPages: preparingRes.data.pagination.totalPages 
+          },
+          [ESTADO_IDS.PREPARADO]: { 
+            page: preparedRes.data.pagination.page, 
+            totalPages: preparedRes.data.pagination.totalPages 
+          },
+        });
+        
         setIsLoading(false);
       }
     } catch (err: any) {
@@ -61,6 +84,35 @@ export const OrdersPage: React.FC = () => {
         }
         setIsLoading(false);
       }
+    }
+  };
+
+  // Function to load more orders for a specific state
+  const handleLoadMore = async (estadoId: number) => {
+    const nextPage = paginationInfo[estadoId as keyof typeof paginationInfo].page + 1;
+    
+    try {
+      const response = await getOrdersByState(estadoId, { page: nextPage, limit: 50 });
+      
+      if (isMountedRef.current) {
+        const newData = response.data.data;
+        const newPagination = response.data.pagination;
+
+        if (estadoId === ESTADO_IDS.PENDIENTE) {
+          setPendingOrders(prev => [...prev, ...newData]);
+        } else if (estadoId === ESTADO_IDS.EN_PREPARACION) {
+          setPreparingOrders(prev => [...prev, ...newData]);
+        } else if (estadoId === ESTADO_IDS.PREPARADO) {
+          setPreparedOrders(prev => [...prev, ...newData]);
+        }
+
+        setPaginationInfo(prev => ({
+          ...prev,
+          [estadoId]: { page: newPagination.page, totalPages: newPagination.totalPages }
+        }));
+      }
+    } catch (err) {
+      console.error(`Error loading more orders for state ${estadoId}:`, err);
     }
   };
 
@@ -147,16 +199,22 @@ export const OrdersPage: React.FC = () => {
             title="PENDIENTE"
             orders={pendingOrders}
             colorClass="bg-red-600"
+            hasMore={paginationInfo[ESTADO_IDS.PENDIENTE].page < paginationInfo[ESTADO_IDS.PENDIENTE].totalPages}
+            onLoadMore={() => handleLoadMore(ESTADO_IDS.PENDIENTE)}
           />
           <OrderColumn
             title="EN PREPARACIÓN"
             orders={preparingOrders}
             colorClass="bg-blue-600"
+            hasMore={paginationInfo[ESTADO_IDS.EN_PREPARACION].page < paginationInfo[ESTADO_IDS.EN_PREPARACION].totalPages}
+            onLoadMore={() => handleLoadMore(ESTADO_IDS.EN_PREPARACION)}
           />
           <OrderColumn
             title="PREPARADO"
             orders={preparedOrders}
             colorClass="bg-gray-600"
+            hasMore={paginationInfo[ESTADO_IDS.PREPARADO].page < paginationInfo[ESTADO_IDS.PREPARADO].totalPages}
+            onLoadMore={() => handleLoadMore(ESTADO_IDS.PREPARADO)}
           />
         </div>
       )}

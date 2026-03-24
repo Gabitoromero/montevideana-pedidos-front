@@ -1,16 +1,25 @@
 import { apiClient } from '../../api/client';
-import type { ApiResponse, PedidoConMovimiento } from './order.types';
+import type { PaginatedOrdersResponse, OrderQueryParams } from './order.types';
 
 /**
- * Obtiene todos los pedidos que tienen un estado específico, ordenados por idPedido
- * @param estadoId - ID del estado a filtrar (1=CHESS, 2=PENDIENTE, 3=EN PREPARACION, 4=PREPARADO, 5=TESORERIA, 6=ENTREGADO)
- * @returns Promise con la respuesta de la API conteniendo el array de pedidos ordenados
+ * Obtiene los pedidos que tienen un estado específico con paginación y ordenamiento
+ * @param estadoId - ID del estado a filtrar
+ * @param params - Parámetros de paginación y ordenamiento
+ * @returns Promise con la respuesta paginada de la API
  */
 export async function getOrdersByState(
-  estadoId: number
-): Promise<ApiResponse<PedidoConMovimiento[]>> {
-  const response = await apiClient.get<ApiResponse<PedidoConMovimiento[]>>(
-    `/pedidos/estado/${estadoId}/ordered`
+  estadoId: number,
+  params: OrderQueryParams = {}
+): Promise<PaginatedOrdersResponse> {
+  const queryParams = new URLSearchParams();
+  
+  if (params.page) queryParams.append('page', params.page.toString());
+  if (params.limit) queryParams.append('limit', params.limit.toString());
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+  const response = await apiClient.get<PaginatedOrdersResponse>(
+    `/pedidos/estado/${estadoId}/ordered?${queryParams.toString()}`
   );
   return response.data;
 }

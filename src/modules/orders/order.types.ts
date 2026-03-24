@@ -36,10 +36,26 @@ export interface PedidoConMovimiento {
   ultimoMovimiento: Movimiento;
 }
 
+import type { PaginationQueryParams, PaginatedData } from '../../shared/types/pagination.types';
+
+// ... (existing code follows)
+
 // Respuesta genérica de la API
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
+}
+
+/**
+ * Respuesta paginada para la API de Pedidos
+ */
+export type PaginatedOrdersResponse = ApiResponse<PaginatedData<PedidoConMovimiento>>;
+
+/**
+ * Parámetros de consulta para los listados de pedidos
+ */
+export interface OrderQueryParams extends PaginationQueryParams {
+  // Aquí se podrían agregar filtros específicos adicionales si fuera necesario
 }
 
 // IDs de estados para referencia

@@ -1,19 +1,24 @@
 import { apiClient } from '../../api/client';
-import type { PedidoConMovimiento } from '../orders/order.types';
-
-interface CancelledOrdersResponse {
-  success: boolean;
-  data: PedidoConMovimiento[];
-}
+import type { PaginatedOrdersResponse, OrderQueryParams } from '../orders/order.types';
 
 /**
- * Obtener todos los pedidos anulados
- * @returns Lista de pedidos anulados
+ * Obtener pedidos anulados con paginación y ordenamiento
+ * @param params - Parámetros de paginación y ordenamiento
+ * @returns Respuesta paginada de pedidos anulados
  */
-export async function getCancelledOrders(): Promise<PedidoConMovimiento[]> {
-  const response = await apiClient.get<CancelledOrdersResponse>('/pedidos/anulados');
+export async function getCancelledOrders(
+  params: OrderQueryParams = {}
+): Promise<PaginatedOrdersResponse> {
+  const queryParams = new URLSearchParams();
   
-  // El backend devuelve { success: true, data: [...] }
-  // Pero axios ya extrae response.data, así que accedemos a response.data.data
-  return response.data.data || [];
+  if (params.page) queryParams.append('page', params.page.toString());
+  if (params.limit) queryParams.append('limit', params.limit.toString());
+  if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+  if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+  const response = await apiClient.get<PaginatedOrdersResponse>(
+    `/pedidos/anulados?${queryParams.toString()}`
+  );
+  
+  return response.data;
 }
