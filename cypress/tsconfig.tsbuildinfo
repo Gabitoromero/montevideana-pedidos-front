@@ -1,0 +1,1 @@
+{"root":["./e2e/assembly/assembly-filters.cy.ts","./e2e/assembly/assembly-movement.cy.ts","./e2e/auth/login-logout.cy.ts","./e2e/auth/permissions.cy.ts","./e2e/auth/romi-login-flow.cy.ts","./e2e/home/homepage-navigation.cy.ts","./e2e/orders/orders-display.cy.ts","./e2e/orders/orders-empty-state.cy.ts","./support/commands.ts","./support/e2e.ts"],"version":"5.9.3"}

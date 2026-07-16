@@ -17,6 +17,7 @@ import { MovimientosIndexPage } from './modules/movimientos/MovimientosIndexPage
 import { MovimientosBuscarPage } from './modules/movimientos/MovimientosBuscarPage';
 import { ExportMovimientosPage } from './modules/movimientos/ExportMovimientosPage';
 import { MovimientosAnuladosPage } from './modules/movimientos/MovimientosAnuladosPage';
+import { ConfiguracionPage } from './modules/configuracion/ConfiguracionPage';
 import { NotFoundPage } from './shared/components/NotFoundPage';
 import { AccessDeniedPage } from './shared/components/AccessDeniedPage';
 import { authService } from './modules/auth/auth.service';
@@ -181,6 +182,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <MovimientosAnuladosPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/configuracion"
+            element={
+              <ProtectedRoute>
+                <ConfiguracionPage />
               </ProtectedRoute>
             }
           />

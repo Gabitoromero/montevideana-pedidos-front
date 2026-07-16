@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Users, Truck, Sun, Moon, LogOut, Activity, Landmark } from 'lucide-react';
+import { X, Users, Truck, Sun, Moon, LogOut, Activity, Landmark, Settings } from 'lucide-react';
 import { useAuthStore } from '../../store/auth.store';
 import { useThemeStore } from '../../store/theme.store';
 import { authService } from '../../modules/auth/auth.service';
@@ -16,6 +16,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
   const user = useAuthStore((state) => state.user);
   const { theme, toggleTheme } = useThemeStore();
 
+  const isAdmin = user?.sector === 'ADMIN';
   const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
   const isExpedicion = user?.sector === 'EXPEDICION';
   const canAccessMovimientos = isAdminOrChess || isExpedicion;
@@ -126,6 +127,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
               >
                 <Landmark size={20} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
                 <span className="text-[var(--text-primary)] font-medium">Tesorería</span>
+              </button>
+            )}
+
+            {/* Configuración */}
+            {isAdmin && (
+              <button
+                onClick={() => handleNavigation('/configuracion')}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"
+              >
+                <Settings size={20} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
+                <span className="text-[var(--text-primary)] font-medium">Configuración</span>
               </button>
             )}
 
