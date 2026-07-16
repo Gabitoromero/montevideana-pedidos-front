@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { OrderColumn } from './OrderColumn';
@@ -7,6 +7,7 @@ import { FullscreenButton } from '../../shared/components/FullscreenButton';
 import { getOrdersByState } from './orders.service';
 import type { PedidoConMovimiento } from './order.types';
 import { ESTADO_IDS } from './order.types';
+import { useNewOrderAlarm } from './hooks/useNewOrderAlarm';
 
 const POLLING_INTERVAL = 5000; // 5 seconds
 
@@ -28,9 +29,10 @@ export const OrdersPage: React.FC = () => {
   // Use ref to track if component is mounted (for cleanup)
   const isMountedRef = useRef(true);
   const pollingIntervalRef = useRef<number | null>(null);
+  const { notificarPedidosPendientes } = useNewOrderAlarm();
 
   // Fetch orders for all states
-  const fetchAllOrders = async () => {
+  const fetchAllOrders = useCallback(async () => {
     try {
       // Clear any previous errors
       setError(null);
@@ -47,6 +49,7 @@ export const OrdersPage: React.FC = () => {
         setPendingOrders(pendingRes.data.data);
         setPreparingOrders(preparingRes.data.data);
         setPreparedOrders(preparedRes.data.data);
+        notificarPedidosPendientes(pendingRes.data.data.map((o) => o.pedido.idPedido));
         
         setPaginationInfo({
           [ESTADO_IDS.PENDIENTE]: { 
@@ -65,13 +68,14 @@ export const OrdersPage: React.FC = () => {
         
         setIsLoading(false);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching orders:', err);
       
       // Only update state if component is still mounted
       if (isMountedRef.current) {
         // Check if it's an auth error (401/403)
-        if (err.response?.status === 401 || err.response?.status === 403) {
+        const errorResponse = (err as { response?: { status?: number } })?.response;
+        if (errorResponse?.status === 401 || errorResponse?.status === 403) {
           // Stop polling immediately to prevent multiple 401 requests
           if (pollingIntervalRef.current) {
             clearInterval(pollingIntervalRef.current);
@@ -85,7 +89,7 @@ export const OrdersPage: React.FC = () => {
         setIsLoading(false);
       }
     }
-  };
+  }, [notificarPedidosPendientes]);
 
   // Function to load more orders for a specific state
   const handleLoadMore = async (estadoId: number) => {
@@ -121,15 +125,17 @@ export const OrdersPage: React.FC = () => {
     // Set mounted flag
     isMountedRef.current = true;
 
-    // Initial fetch, then setup polling
-    fetchAllOrders().then(() => {
+    const initPolling = async () => {
+      await fetchAllOrders();
       // Only setup polling if component is still mounted
       if (isMountedRef.current) {
-        pollingIntervalRef.current = setInterval(() => {
+        pollingIntervalRef.current = window.setInterval(() => {
           fetchAllOrders();
         }, POLLING_INTERVAL);
       }
-    });
+    };
+    
+    void initPolling();
 
     // Cleanup on unmount
     return () => {
@@ -139,7 +145,7 @@ export const OrdersPage: React.FC = () => {
         pollingIntervalRef.current = null;
       }
     };
-  }, []);
+  }, [fetchAllOrders]);
 
   return (
     <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
