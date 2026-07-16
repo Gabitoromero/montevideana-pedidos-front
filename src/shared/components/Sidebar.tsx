@@ -16,7 +16,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
   const user = useAuthStore((state) => state.user);
   const { theme, toggleTheme } = useThemeStore();
 
-  const isAdmin = user?.sector === 'ADMIN';
+  //const isAdmin = user?.sector === 'ADMIN';
   const isAdminOrChess = user?.sector === 'ADMIN' || user?.sector === 'CHESS';
   const isExpedicion = user?.sector === 'EXPEDICION';
   const canAccessMovimientos = isAdminOrChess || isExpedicion;
