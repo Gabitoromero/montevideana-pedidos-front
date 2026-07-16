@@ -51,7 +51,7 @@ export const ConfiguracionPage: React.FC = () => {
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const fieldSchema = configuracionSchema.pick({ [name]: true } as any);
+    const fieldSchema = configuracionSchema.pick({ [name]: true } as Record<keyof ConfiguracionDTO, true>);
     const result = fieldSchema.safeParse({ [name]: value });
     if (!result.success) {
       setErrors((prev) => ({ ...prev, [name]: result.error.issues[0]?.message }));
@@ -91,10 +91,11 @@ export const ConfiguracionPage: React.FC = () => {
         type: 'success',
         message: 'Configuración actualizada exitosamente'
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorResponse = (error as { response?: { data?: { message?: string } } })?.response;
       setSubmitStatus({
         type: 'error',
-        message: error.response?.data?.message || 'Error al actualizar configuración'
+        message: errorResponse?.data?.message || 'Error al actualizar configuración'
       });
     } finally {
       setIsSubmitting(false);
