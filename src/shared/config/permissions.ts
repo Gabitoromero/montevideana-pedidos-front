@@ -87,6 +87,11 @@ export const ROUTE_PERMISSIONS: RoutePermission[] = [
     allowedSectors: ['ADMIN', 'CHESS', 'EXPEDICION'],
     label: 'Buscar Movimientos'
   },
+  {
+    path: '/configuracion',
+    allowedSectors: ['ADMIN', 'CHESS'],
+    label: 'Configuración'
+  },
 ];
 
 /**

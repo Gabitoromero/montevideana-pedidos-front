@@ -51,8 +51,10 @@ export const ConfiguracionPage: React.FC = () => {
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const fieldSchema = configuracionSchema.pick({ [name]: true } as Record<keyof ConfiguracionDTO, true>);
-    const result = fieldSchema.safeParse({ [name]: value });
+    type SchemaKeys = keyof typeof configuracionSchema.shape;
+    const fieldName = name as SchemaKeys;
+    const fieldSchema = configuracionSchema.pick({ [fieldName]: true } as Record<SchemaKeys, true>);
+    const result = fieldSchema.safeParse({ [fieldName]: value });
     if (!result.success) {
       setErrors((prev) => ({ ...prev, [name]: result.error.issues[0]?.message }));
     }

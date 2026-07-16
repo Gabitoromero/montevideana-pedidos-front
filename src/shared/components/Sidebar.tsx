@@ -128,10 +128,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ externalIsOpen, externalSetIsO
                 <Landmark size={20} className="text-[var(--primary)] group-hover:text-[var(--primary-light)]" />
                 <span className="text-[var(--text-primary)] font-medium">Tesorería</span>
               </button>
+
+              
             )}
 
             {/* Configuración */}
-            {isAdmin && (
+            {isAdminOrChess && (
               <button
                 onClick={() => handleNavigation('/configuracion')}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-[var(--bg-lighter)] hover:bg-[var(--primary)]/20 border border-[var(--border)] hover:border-[var(--primary)] transition-all duration-200 group"
